@@ -1,0 +1,58 @@
+#include "art.h"
+    
+const char tankUp[] =
+"  \xDC  \n"
+"  \xDB  \n"
+"\xDC/\xDB\\\xDC\n"
+"\xB2\xDD\xB2\xDE\xB2\n"
+"\xDF\\\xDF/\xDF\n";
+
+
+const char tankDown[] =
+"\xDC/\xDC\\\xDC\n"
+"\xB2\xDD\xB2\xDE\xB2\n"
+"\xDF\\\xDB/\xDF\n"
+"  \xDB  \n"
+"  \xDF  \n";
+
+const char tankLeft[] =
+"  \xDC  \n"
+"  \xDB  \n"
+"\xDC/\xDB\\\xDC\n"
+"\xB2\xDD\xB2\xDE\xB2\n"
+"\xDF\\\xDF/\xDF\n";
+
+const char tankRight[] =
+"  \xDC  \n"
+"  \xDB  \n"
+"\xDC/\xDB\\\xDC\n"
+"\xB2\xDD\xB2\xDE\xB2\n"
+"\xDF\\\xDF/\xDF\n";
+
+const char tankUpLeft[] =
+"  \xDC  \n"
+"  \xDB  \n"
+"\xDC/\xDB\\\xDC\n"
+"\xB2\xDD\xB2\xDE\xB2\n"
+"\xDF\\\xDF/\xDF\n";
+
+const char tankUpRight[] =
+"  \xDC  \n"
+"  \xDB  \n"
+"\xDC/\xDB\\\xDC\n"
+"\xB2\xDD\xB2\xDE\xB2\n"
+"\xDF\\\xDF/\xDF\n";
+
+const char tankDownLeft[] =
+"  \xDC  \n"
+"  \xDB  \n"
+"\xDC/\xDB\\\xDC\n"
+"\xB2\xDD\xB2\xDE\xB2\n"
+"\xDF\\\xDF/\xDF\n";
+
+const char tankDownRight[] =
+"  \xDC  \n"
+"  \xDB  \n"
+"\xDC/\xDB\\\xDC\n"
+"\xB2\xDD\xB2\xDE\xB2\n"
+"\xDF\\\xDF/\xDF\n";

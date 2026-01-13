@@ -1,7 +1,0 @@
-sinus.c:86:6:printFix	24	static
-sinus.c:100:9:expand	16	static
-sinus.c:105:9:rdiv	24	static
-sinus.c:114:9:sinus	24	static
-sinus.c:124:9:cosinus	16	static
-sinus.c:128:6:initVector	24	static
-sinus.c:133:6:rotateVector	32	static

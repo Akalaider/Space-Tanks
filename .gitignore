@@ -1,1 +1,7 @@
 .DS_Store
+
+# Allow ONLY .c files in Src/
+!Src/*.c
+
+# Allow ONLY .h files in Inc/
+!Inc/*.h

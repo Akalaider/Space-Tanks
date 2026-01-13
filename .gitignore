@@ -5,3 +5,5 @@
 
 # Allow ONLY .h files in Inc/
 !Inc/*.h
+
+.vscode/

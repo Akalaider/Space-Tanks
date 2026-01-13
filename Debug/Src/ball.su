@@ -1,0 +1,5 @@
+ball.c:11:6:makeScore	16	static
+ball.c:17:6:scoreUpdate	16	static
+ball.c:23:8:startBallGame	8	static
+ball.c:30:6:initBall	24	static
+ball.c:37:8:ballUpdate	40	static

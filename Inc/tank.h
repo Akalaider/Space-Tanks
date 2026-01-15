@@ -3,9 +3,9 @@
 #include "ansi.h"
 #include "art.h"
 
-#define TANK_WIDTH 5
+#define TANK_WIDTH 8
 #define TANK_HEIGHT 5
-#define TANK_RADIUS 2   // square hitbox
+#define TANK_RADIUS 4   // square hitbox
 
 void drawTank(Point pos, const char *sprite);
 void eraseTank(Point pos);

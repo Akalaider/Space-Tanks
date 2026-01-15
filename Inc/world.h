@@ -5,8 +5,8 @@
 
 typedef struct 
 {
-    uint8_t x; 
-    uint8_t y; 
+    int16_t x; 
+    int16_t y; 
 } Point;
 
 typedef struct {
@@ -16,7 +16,7 @@ typedef struct {
 
 typedef struct {
     WallSegment segments[MAX_WALL_SEGMENTS];
-    uint8_t count;
+    uint16_t count;
 } World;
 
 typedef enum {

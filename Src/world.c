@@ -1,10 +1,7 @@
 #include "30010_io.h" // Input/output library for this course
 #include "world.h"
 #include "ansi.h"
-
-#define TANK_WIDTH 25
-#define TANK_HEIGHT 7
-#define TANK_RADIUS 4   // hitbox radius (square)
+#include "tank.h"
 
 
 static inline int iabs(int x) {
@@ -16,8 +13,8 @@ void drawLine(Point P1, Point P2)
     if (P1.x == P2.x) 
     {
         // Vert
-        uint8_t x = P1.x;
-        for (uint8_t y = (P1.y < P2.y ? P1.y : P2.y); y <= (P1.y > P2.y ? P1.y : P2.y); y++) 
+        uint16_t x = P1.x;
+        for (uint16_t y = (P1.y < P2.y ? P1.y : P2.y); y <= (P1.y > P2.y ? P1.y : P2.y); y++) 
         {
             gotoxy(x, y);
             printf("%c", 219);
@@ -26,23 +23,11 @@ void drawLine(Point P1, Point P2)
     if (P1.y == P2.y) 
     {
         // Hor
-        uint8_t y = P1.y;
-        for (uint8_t x = (P1.x < P2.x ? P1.x : P2.x); x <= (P1.x > P2.x ? P1.x : P2.x); x++) 
+        uint16_t y = P1.y;
+        for (uint16_t x = (P1.x < P2.x ? P1.x : P2.x); x <= (P1.x > P2.x ? P1.x : P2.x); x++) 
         {
             gotoxy(x, y);
-            printf("%c", 223);
-        }
-    }
-    if (iabs(P2.y - P1.y) == iabs(P2.x - P1.x)) 
-    {
-        // Diag
-        int8_t xStep = (P2.x > P1.x) ? 1 : -1;
-        int8_t yStep = (P2.y > P1.y) ? 1 : -1;
-        uint8_t length = iabs(P2.x - P1.x);
-        for (uint8_t i = 0; i <= length; i++) 
-        {
-            gotoxy(P1.x + i * xStep, P1.y + i * yStep);
-            printf("%c", 223);
+            printf("%c", 219);
         }
     }
 }
@@ -69,17 +54,17 @@ void drawWalls(Point* positions, uint8_t numPoints, uint8_t closePath, World* wo
 
 CollisionSide segmentCollision(Point pos, uint8_t radius, WallSegment seg)
 {
-    uint8_t x1 = seg.p1.x;
-    uint8_t y1 = seg.p1.y;
-    uint8_t x2 = seg.p2.x;
-    uint8_t y2 = seg.p2.y;
+    uint16_t x1 = seg.p1.x;
+    uint16_t y1 = seg.p1.y;
+    uint16_t x2 = seg.p2.x;
+    uint16_t y2 = seg.p2.y;
 
     // Vertical wall (x = constant)
     if (x1 == x2) {
-        uint8_t wallX = x1;
+        uint16_t wallX = x1;
 
-        uint8_t minY = (y1 < y2 ? y1 : y2);
-        uint8_t maxY = (y1 > y2 ? y1 : y2);
+        uint16_t minY = (y1 < y2 ? y1 : y2);
+        uint16_t maxY = (y1 > y2 ? y1 : y2);
 
         // Check if ball overlaps vertically
         if (pos.y >= minY && pos.y <= maxY) {
@@ -96,10 +81,10 @@ CollisionSide segmentCollision(Point pos, uint8_t radius, WallSegment seg)
 
     // Horizontal wall (y = constant)
     if (y1 == y2) {
-        uint8_t wallY = y1;
+        uint16_t wallY = y1;
 
-        uint8_t minX = (x1 < x2 ? x1 : x2);
-        uint8_t maxX = (x1 > x2 ? x1 : x2);
+        uint16_t minX = (x1 < x2 ? x1 : x2);
+        uint16_t maxX = (x1 > x2 ? x1 : x2);
 
         // Check if ball overlaps horizontally
         if (pos.x >= minX && pos.x <= maxX) {
@@ -121,7 +106,7 @@ CollisionSide segmentCollision(Point pos, uint8_t radius, WallSegment seg)
 
 CollisionSide checkWallCollision(Point pos, uint8_t radius, World* world)
 {
-    for (uint8_t i = 0; i < world->count; i++) {
+    for (uint16_t i = 0; i < world->count; i++) {
         CollisionSide side = segmentCollision(pos, radius, world->segments[i]);
         if (side != COLLISION_NONE)
             return side;

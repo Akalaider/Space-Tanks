@@ -1,9 +1,4 @@
-/*
- * timer.h
- *
- *  Created on: 8. jan. 2026
- *      Author: adambenali
- */
+#include "blink.h"
 
 #ifndef TIMER_H_
 #define TIMER_H_
@@ -19,7 +14,6 @@ typedef struct{
 	volatile int16_t millisecond;
 } stopwatch;
 static volatile stopwatch sw = {0};
-static uint8_t lcdFlag = 0;
 
 void initTimer(int16_t interruptMS, int8_t priority);
 void TIM1_BRK_TIM15_IRQHandler();

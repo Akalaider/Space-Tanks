@@ -40,7 +40,7 @@ void eraseTank(Point pos)
 // Choose sprite based on velocity
 const char *selectTankSprite(Point vel)
 {
-    if (vel.x == 0 && vel.y == 0) return tankUp;
+    if (vel.x == 0 && vel.y == 0) return getTankUp;
     
     int16_t absX = vel.x < 0 ? -vel.x : vel.x;
     int16_t absY = vel.y < 0 ? -vel.y : vel.y;
@@ -57,27 +57,27 @@ const char *selectTankSprite(Point vel)
     
     if (vel.y < 0) {  // Upper half
         if (vel.x > 0) {  // Upper right quadrant
-            if (absX > absY * 2) return tankRight;
-            if (absY > absX * 2) return tankUp;
-            return tankUpRight;
+            if (absX > absY * 2) return getTankRight;
+            if (absY > absX * 2) return getTankUp;
+            return getTankUpRight;
         } else if (vel.x < 0) {  // Upper left quadrant
-            if (absX > absY * 2) return tankLeft;
-            if (absY > absX * 2) return tankUp;
-            return tankUpLeft;
+            if (absX > absY * 2) return getTankLeft;
+            if (absY > absX * 2) return getTankUp;
+            return getTankUpLeft;
         } else {
-            return tankUp;
+            return getTankUp;
         }
     } else {  // Lower half
         if (vel.x > 0) {  // Lower right quadrant
-            if (absX > absY * 2) return tankRight;
-            if (absY > absX * 2) return tankDown;
-            return tankDownRight;
+            if (absX > absY * 2) return getTankRight;
+            if (absY > absX * 2) return getTankDown;
+            return getTankDownRight;
         } else if (vel.x < 0) {  // Lower left quadrant
-            if (absX > absY * 2) return tankLeft;
-            if (absY > absX * 2) return tankDown;
-            return tankDownLeft;
+            if (absX > absY * 2) return getTankLeft;
+            if (absY > absX * 2) return getTankDown;
+            return getTankDownLeft;
         } else {
-            return tankDown;
+            return getTankDown;
         }
     }
 }

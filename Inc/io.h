@@ -14,11 +14,12 @@
 
 void setupClock();
 
-#define up 1
-#define down 2
-#define left 4
-#define right 8
-#define center 16
+#define JOY_UP (1 << 0) 
+#define JOY_DOWN (1 << 1) 
+#define JOY_LEFT (1 << 2) 
+#define JOY_RIGHT (1 << 3) 
+#define JOY_CENTER (1 << 4)
+
 void setupUp();
 void setupDown();
 void setupRight();
@@ -40,6 +41,12 @@ void setupGreen();
 void setupBlue();
 void setupLED();
 void setLED(uint8_t RGB);
+
+typedef struct {
+    uint8_t prev;
+} JoyStateTracker;
+
+uint8_t joyPressed(JoyStateTracker *js, uint8_t mask);
 
 
 #endif /* IO_H_ */

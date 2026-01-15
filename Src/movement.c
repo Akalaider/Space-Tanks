@@ -2,83 +2,95 @@
 #include "world.h"
 #include "tank.h"
 #include "ansi.h"
-#include "joystick.h"
+#include "io.h"
 
-Point tankPos = {10, 61};  // Bottom left
-Point vel = {0, 0};  // Start 
+// Fixed‑point scale factor (100 = 2 decimal places) 
+#define FP_SCALE 100 
+
+// Tunable speeds (integer only) 
+#define SPEED_X 100 // horizontal speed 
+#define SPEED_Y 60 // vertical speed (rows are taller) 
+#define DIAG_SCALE 71 // ≈ 1/sqrt(2) * 100
+
+// Fixed‑point tank position 
+static int posX = 10 * FP_SCALE; 
+static int posY = 61 * FP_SCALE;
+
 static const char *sprite = NULL;
 
 void initTank(void) {
     sprite = selectTankSprite((Point){0, -1});
-    drawTank(tankPos, sprite);
+    Point p = { posX / FP_SCALE, posY / FP_SCALE };
+    drawTank(p, sprite);
 }
 
-
 void controlTank(World *world) {
-    // Read joystick input
-    uint8_t joyState = readJoy();
+    uint8_t joyState = readJoystick();
 
-    // Update velocity based on joystick
-    // Reset velocity first
-    vel.x = 0;
-    vel.y = 0;
+    int dx = 0;
+    int dy = 0;
 
-    // Check each direction
-    if (joyState & (1 << 0)) {  // UP
-        vel.y = -1;
-    }
-    if (joyState & (1 << 1)) {  // DOWN
-        vel.y = 1;
-    }
-    if (joyState & (1 << 2)) {  // LEFT
-        vel.x = -1;
-    }
-    if (joyState & (1 << 3)) {  // RIGHT
-        vel.x = 1;
-    }
-    if (joyState & (1 << 4)) {  // CENTER - exit to menu
+    // Build velocity in fixed‑point units
+    if (joyState & JOY_UP)    dy = -SPEED_Y;
+    if (joyState & JOY_DOWN)  dy =  SPEED_Y;
+    if (joyState & JOY_LEFT)  dx = -SPEED_X;
+    if (joyState & JOY_RIGHT) dx =  SPEED_X;
+
+    if (joyState & JOY_CENTER)
         return;
+
+    // LED feedback
+    setLED(joyState);
+
+    // Normalize diagonal movement
+    if (dx != 0 && dy != 0) {
+        dx = dx * DIAG_SCALE / 100;
+        dy = dy * DIAG_SCALE / 100;
     }
 
-    // Visual feedback
-    controlLED(joyState);
+    // If no movement, skip everything
+    if (dx == 0 && dy == 0)
+        return;
 
-    // Only move and redraw if velocity changed or tank is moving
-    if (vel.x != 0 || vel.y != 0) {
-        eraseTank(tankPos);
-        
-        // Calculate next position
-        Point nextPos = {tankPos.x + vel.x, tankPos.y + vel.y};
-        
-        // Check collision
-        CollisionSide collision = checkWallCollision(nextPos, TANK_RADIUS, world);
-        
-        if (collision != COLLISION_NONE) {
-            // Don't move if there's a collision
-            // Optionally: allow sliding along walls
-            if (collision == COLLISION_LEFT || collision == COLLISION_RIGHT) {
-                // Can still move vertically
-                Point testY = {tankPos.x, tankPos.y + vel.y};
-                if (checkWallCollision(testY, TANK_RADIUS, world) == COLLISION_NONE) {
-                    tankPos.y += vel.y;
-                }
-            }
-            if (collision == COLLISION_TOP || collision == COLLISION_BOTTOM) {
-                // Can still move horizontally
-                Point testX = {tankPos.x + vel.x, tankPos.y};
-                if (checkWallCollision(testX, TANK_RADIUS, world) == COLLISION_NONE) {
-                    tankPos.x += vel.x;
-                }
-            }
-        } else {
-            // No collision, move freely
-            tankPos = nextPos;
+    // Erase old tank
+    Point oldPos = { posX / FP_SCALE, posY / FP_SCALE };
+    eraseTank(oldPos);
+
+    // Compute next fixed‑point position
+    int nextX = posX + dx;
+    int nextY = posY + dy;
+
+    // Convert to integer for collision test
+    Point nextPos = { nextX / FP_SCALE, nextY / FP_SCALE };
+
+    // Collision detection
+    CollisionSide col = checkWallCollision(nextPos, TANK_RADIUS, world);
+
+    if (col == COLLISION_NONE) {
+        // Move freely
+        posX = nextX;
+        posY = nextY;
+    } else {
+        // Sliding logic (integer‑safe)
+        if (col == COLLISION_LEFT || col == COLLISION_RIGHT) {
+            int testY = posY + dy;
+            Point p = { posX / FP_SCALE, testY / FP_SCALE };
+            if (checkWallCollision(p, TANK_RADIUS, world) == COLLISION_NONE)
+                posY = testY;
         }
-        
-        // Select sprite based on velocity
-        sprite = selectTankSprite(vel);
-        drawTank(tankPos, sprite);
+        if (col == COLLISION_TOP || col == COLLISION_BOTTOM) {
+            int testX = posX + dx;
+            Point p = { testX / FP_SCALE, posY / FP_SCALE };
+            if (checkWallCollision(p, TANK_RADIUS, world) == COLLISION_NONE)
+                posX = testX;
+        }
     }
 
-    for(volatile uint32_t i = 0; i < 100000; i++); // adjust for speed - change when implementing TIMER
+    // Draw new tank
+    Point drawPos = { posX / FP_SCALE, posY / FP_SCALE };
+    sprite = selectTankSprite((Point){ dx, dy });
+    drawTank(drawPos, sprite);
+
+    // (replace with timer later)
+    for (volatile uint32_t i = 0; i < 100000; i++);
 }

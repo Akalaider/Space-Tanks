@@ -7,6 +7,17 @@
 
 #include "io.h"
 
+#define JOY_MASK 0x1F   // UP, DOWN, LEFT, RIGHT, CENTER
+
+uint8_t joyPressed(JoyStateTracker *js, uint8_t mask) { 
+    uint8_t now = readJoystick() & JOY_MASK; 
+    
+    // Active-low: 1 (released) -> 0 (pressed) 
+    uint8_t pressed = (js->prev & ~now) & mask; 
+    js->prev = now; 
+    return pressed; 
+}
+
 void setupClock(){
 	RCC->AHBENR |= RCC_AHBPeriph_GPIOA; // Enable clock for GPIO Port A
 	RCC->AHBENR |= RCC_AHBPeriph_GPIOB; // Enable clock for GPIO Port B

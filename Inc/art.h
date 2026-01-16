@@ -27,5 +27,12 @@ const char *getSelector(void);
 const char *getBlankSelector(void);
 const char *getPlayGame(void);
 const char *getHighscores(void);
+const char *getBack(void);
+const char *getSingleplayer(void);
+const char *getMultiplayer(void);
+const char *getArrowLeft(void);
+const char *getArrowRight(void);
+const char *getArrowDown(void);
+const char *getBlankArrow(void);
 
 #endif

@@ -52,28 +52,54 @@ void drawWalls(Point* positions, uint8_t numPoints, uint8_t closePath, World* wo
     } 
 }
 
-void drawObstacle(Point position, const char* sprite, uint8_t diameter, World* world)
+Point getSpriteSize(const char *sprite)
+{
+    Point size = {0, 1}; // width, height
+    int16_t currentWidth = 0;
+
+    for (const char *p = sprite; *p; p++) {
+        if (*p == '\n') {
+            size.y++;
+            if (currentWidth > size.x)
+                size.x = currentWidth;
+            currentWidth = 0;
+        } else {
+            currentWidth++;
+        }
+    }
+
+    if (currentWidth > size.x)
+        size.x = currentWidth;
+
+    return size;
+}
+
+
+void drawObstacle(Point position, const char* sprite, World* world)
 {
     printCp850At(position.x, position.y, sprite);
+    Point size = getSpriteSize(sprite);
 
+    // corners
     Point topLeft     = position;
-    Point topRight    = (Point){ position.x + diameter, position.y };
-    Point bottomLeft  = (Point){ position.x, position.y + diameter };
-    Point bottomRight = (Point){ position.x + diameter, position.y + diameter };
+    Point topRight    = (Point){ position.x + size.x, position.y };
+    Point bottomLeft  = (Point){ position.x, position.y + size.y };
+    Point bottomRight = (Point){ position.x + size.x, position.y + size.y };
 
-    // Add the 4 edges as wall segments
+    // Add 4 wall segments
     if (world->count < MAX_WALL_SEGMENTS)
-        world->segments[world->count++] = (Segment){ topLeft, topRight };
-
-    if (world->count < MAX_WALL_SEGMENTS)
-        world->segments[world->count++] = (Segment){ topRight, bottomRight };
+        world->segments[world->count++] = (WallSegment){ topLeft, topRight };
 
     if (world->count < MAX_WALL_SEGMENTS)
-        world->segments[world->count++] = (Segment){ bottomRight, bottomLeft };
+        world->segments[world->count++] = (WallSegment){ topRight, bottomRight };
 
     if (world->count < MAX_WALL_SEGMENTS)
-        world->segments[world->count++] = (Segment){ bottomLeft, topLeft };
+        world->segments[world->count++] = (WallSegment){ bottomRight, bottomLeft };
+
+    if (world->count < MAX_WALL_SEGMENTS)
+        world->segments[world->count++] = (WallSegment){ bottomLeft, topLeft };
 }
+
 
 
 

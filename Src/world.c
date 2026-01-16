@@ -52,6 +52,31 @@ void drawWalls(Point* positions, uint8_t numPoints, uint8_t closePath, World* wo
     } 
 }
 
+void drawObstacle(Point position, const char* sprite, uint8_t diameter, World* world)
+{
+    printCp850At(position.x, position.y, sprite);
+
+    Point topLeft     = position;
+    Point topRight    = (Point){ position.x + diameter, position.y };
+    Point bottomLeft  = (Point){ position.x, position.y + diameter };
+    Point bottomRight = (Point){ position.x + diameter, position.y + diameter };
+
+    // Add the 4 edges as wall segments
+    if (world->count < MAX_WALL_SEGMENTS)
+        world->segments[world->count++] = (Segment){ topLeft, topRight };
+
+    if (world->count < MAX_WALL_SEGMENTS)
+        world->segments[world->count++] = (Segment){ topRight, bottomRight };
+
+    if (world->count < MAX_WALL_SEGMENTS)
+        world->segments[world->count++] = (Segment){ bottomRight, bottomLeft };
+
+    if (world->count < MAX_WALL_SEGMENTS)
+        world->segments[world->count++] = (Segment){ bottomLeft, topLeft };
+}
+
+
+
 CollisionSide segmentCollision(Point pos, uint8_t radius, WallSegment seg)
 {
     uint16_t x1 = seg.p1.x;

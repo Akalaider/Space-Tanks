@@ -32,6 +32,7 @@ typedef enum {
 
 void drawWalls(Point* positions, uint8_t numPoints, uint8_t closePath, World* world);
 void drawLine(Point P1, Point P2);
+void drawObstacle(Point position, const char* sprite, uint8_t diameter, World* world);
 CollisionSide segmentCollision(Point pos, uint8_t radius, WallSegment seg);
 CollisionSide checkWallCollision(Point pos, uint8_t radius, World* world);
 

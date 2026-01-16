@@ -1,12 +1,30 @@
 #include "30010_io.h" // Input/output library for this course
+#include <stdlib.h>
 #include "world.h"
 #include "ansi.h"
 #include "tank.h"
 
-
-static inline int iabs(int x) {
-    return x < 0 ? -x : x;
+Rect getTankRect(Point pos)
+{
+    Rect r;
+    r.left   = pos.x - TANK_WIDTH  / 2;
+    r.right  = pos.x + TANK_WIDTH  / 2;
+    r.top    = pos.y - TANK_HEIGHT / 2;
+    r.bottom = pos.y + TANK_HEIGHT / 2;
+    return r;
 }
+
+
+Rect getObstacleRect(Point pos, Point size)
+{
+    Rect r;
+    r.left   = pos.x;
+    r.right  = pos.x + size.x - 1;
+    r.top    = pos.y;
+    r.bottom = pos.y + size.y - 1;
+    return r;
+}
+
 
 void drawLine(Point P1, Point P2)
 {
@@ -82,9 +100,9 @@ void drawObstacle(Point position, const char* sprite, World* world)
 
     // corners
     Point topLeft     = position;
-    Point topRight    = (Point){ position.x + size.x, position.y };
-    Point bottomLeft  = (Point){ position.x, position.y + size.y };
-    Point bottomRight = (Point){ position.x + size.x, position.y + size.y };
+    Point topRight    = (Point){ position.x + size.x - 1, position.y };
+    Point bottomLeft  = (Point){ position.x, position.y + size.y - 1 };
+    Point bottomRight = (Point){ position.x + size.x - 1, position.y + size.y - 1 };
 
     // Add 4 wall segments
     if (world->count < MAX_WALL_SEGMENTS)
@@ -100,67 +118,76 @@ void drawObstacle(Point position, const char* sprite, World* world)
         world->segments[world->count++] = (WallSegment){ bottomLeft, topLeft };
 }
 
-
-
-
-CollisionSide segmentCollision(Point pos, uint8_t radius, WallSegment seg)
+uint8_t rectOverlap(Rect a, Rect b)
 {
-    uint16_t x1 = seg.p1.x;
-    uint16_t y1 = seg.p1.y;
-    uint16_t x2 = seg.p2.x;
-    uint16_t y2 = seg.p2.y;
+    return !(a.right < b.left ||
+             a.left > b.right ||
+             a.bottom < b.top ||
+             a.top > b.bottom);
+}
 
-    // Vertical wall (x = constant)
-    if (x1 == x2) {
-        uint16_t wallX = x1;
+CollisionSide getCollisionSide(Rect tank, Rect wall)
+{
+    int overlapLeft   = tank.right  - wall.left;
+    int overlapRight  = wall.right  - tank.left;
+    int overlapTop    = tank.bottom - wall.top;
+    int overlapBottom = wall.bottom - tank.top;
 
-        uint16_t minY = (y1 < y2 ? y1 : y2);
-        uint16_t maxY = (y1 > y2 ? y1 : y2);
+    int min = abs(overlapLeft);
+    CollisionSide side = COLLISION_RIGHT;
 
-        // Check if ball overlaps vertically
-        if (pos.y >= minY && pos.y <= maxY) {
-
-            // Ball hits from left
-            if (pos.x + radius >= wallX && pos.x < wallX)
-                return COLLISION_RIGHT;
-
-            // Ball hits from right
-            if (pos.x - radius <= wallX && pos.x > wallX)
-                return COLLISION_LEFT;
-        }
+    if (abs(overlapRight) < min) {
+        min = abs(overlapRight);
+        side = COLLISION_LEFT;
+    }
+    if (abs(overlapTop) < min) {
+        min = abs(overlapTop);
+        side = COLLISION_BOTTOM;
+    }
+    if (abs(overlapBottom) < min) {
+        min = abs(overlapBottom);
+        side = COLLISION_TOP;
     }
 
-    // Horizontal wall (y = constant)
-    if (y1 == y2) {
-        uint16_t wallY = y1;
-
-        uint16_t minX = (x1 < x2 ? x1 : x2);
-        uint16_t maxX = (x1 > x2 ? x1 : x2);
-
-        // Check if ball overlaps horizontally
-        if (pos.x >= minX && pos.x <= maxX) {
-
-            // Ball hits from above
-            if (pos.y + radius >= wallY && pos.y < wallY)
-                return COLLISION_BOTTOM;
-
-            // Ball hits from below
-            if (pos.y - radius <= wallY && pos.y > wallY)
-                return COLLISION_TOP;
-        }
-    }
-
-    return COLLISION_NONE;
+    return side;
 }
 
 
-
-CollisionSide checkWallCollision(Point pos, uint8_t radius, World* world)
+CollisionSide rectCollision(Rect tank, Rect wall)
 {
+    if (!rectOverlap(tank, wall))
+        return COLLISION_NONE;
+
+    return getCollisionSide(tank, wall);
+}
+
+
+CollisionSide checkWallCollisionAABB(Point tankPos, World *world)
+{
+    Rect tank = getTankRect(tankPos);
+
     for (uint16_t i = 0; i < world->count; i++) {
-        CollisionSide side = segmentCollision(pos, radius, world->segments[i]);
+        WallSegment seg = world->segments[i];
+
+        Rect wall = {
+            .left   = seg.p1.x,
+            .right  = seg.p2.x,
+            .top    = seg.p1.y,
+            .bottom = seg.p2.y
+        };
+
+        // Normalize (in case p1 > p2)
+        if (wall.left > wall.right) {
+            int16_t tmp = wall.left; wall.left = wall.right; wall.right = tmp;
+        }
+        if (wall.top > wall.bottom) {
+            int16_t tmp = wall.top; wall.top = wall.bottom; wall.bottom = tmp;
+        }
+
+        CollisionSide side = rectCollision(tank, wall);
         if (side != COLLISION_NONE)
             return side;
     }
+
     return COLLISION_NONE;
 }

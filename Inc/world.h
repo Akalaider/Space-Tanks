@@ -19,6 +19,14 @@ typedef struct {
     uint16_t count;
 } World;
 
+typedef struct {
+    int16_t left;
+    int16_t right;
+    int16_t top;
+    int16_t bottom;
+} Rect;
+
+
 typedef enum {
     COLLISION_NONE,
     COLLISION_LEFT,    // hit wall on its left side
@@ -28,13 +36,15 @@ typedef enum {
 } CollisionSide;
 
 
-
-
+Rect getTankRect(Point pos);
+Rect getObstacleRect(Point pos, Point size);
+uint8_t rectOverlap(Rect a, Rect b);
 void drawWalls(Point* positions, uint8_t numPoints, uint8_t closePath, World* world);
 void drawLine(Point P1, Point P2);
 Point getSpriteSize(const char *sprite);
 void drawObstacle(Point position, const char* sprite, World* world);
-CollisionSide segmentCollision(Point pos, uint8_t radius, WallSegment seg);
-CollisionSide checkWallCollision(Point pos, uint8_t radius, World* world);
+CollisionSide getCollisionSide(Rect tank, Rect wall);
+CollisionSide rectCollision(Rect tank, Rect wall);
+CollisionSide checkWallCollisionAABB(Point tankPos, World *world);
 
 #endif

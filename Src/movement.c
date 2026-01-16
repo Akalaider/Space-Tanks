@@ -60,31 +60,27 @@ void controlTank(World *world) {
     int nextX = posX + dx;
     int nextY = posY + dy;
 
-    // Convert to integer for collision test
+    // Convert next position to integer
     Point nextPos = { nextX / FP_SCALE, nextY / FP_SCALE };
 
-    // Collision detection
-    CollisionSide col = checkWallCollision(nextPos, TANK_RADIUS, world);
-
-    if (col == COLLISION_NONE) {
-        // Move freely
+    // Try full movement
+    if (checkWallCollisionAABB(nextPos, world) == COLLISION_NONE) {
         posX = nextX;
         posY = nextY;
     } else {
-        // Sliding logic (integer‑safe)
-        if (col == COLLISION_LEFT || col == COLLISION_RIGHT) {
-            int testY = posY + dy;
-            Point p = { posX / FP_SCALE, testY / FP_SCALE };
-            if (checkWallCollision(p, TANK_RADIUS, world) == COLLISION_NONE)
-                posY = testY;
+        // Try X-only movement
+        Point tryX = { (posX + dx) / FP_SCALE, posY / FP_SCALE };
+        if (checkWallCollisionAABB(tryX, world) == COLLISION_NONE) {
+            posX += dx;
         }
-        if (col == COLLISION_TOP || col == COLLISION_BOTTOM) {
-            int testX = posX + dx;
-            Point p = { testX / FP_SCALE, posY / FP_SCALE };
-            if (checkWallCollision(p, TANK_RADIUS, world) == COLLISION_NONE)
-                posX = testX;
+
+        // Try Y-only movement
+        Point tryY = { posX / FP_SCALE, (posY + dy) / FP_SCALE };
+        if (checkWallCollisionAABB(tryY, world) == COLLISION_NONE) {
+            posY += dy;
         }
     }
+
 
     // Draw new tank
     Point drawPos = { posX / FP_SCALE, posY / FP_SCALE };

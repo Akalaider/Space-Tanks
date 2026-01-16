@@ -1,11 +1,13 @@
-/*
- * timer.c
- *
- *  Created on: 8. jan. 2026
- *      Author: adambenali
- */
 #include "timer.h"
+#include "blink.h"
 
+static BlinkController *blinkPtr = NULL;
+static uint8_t lcdFlag = 0;
+
+
+void timer_attachBlink(BlinkController *b) {
+    blinkPtr = b;
+}
 
 void initTimer(int16_t interruptMS, int8_t priority){
 	RCC->APB2ENR |= RCC_APB2Periph_TIM15; // Enable clock line to timer 15;
@@ -29,26 +31,32 @@ void TIM1_BRK_TIM15_IRQHandler() {
 	if (sw.millisecond < 999){
 		sw.millisecond++;
 		everyInterrupt();
-		return;
 	} else {
 		sw.millisecond = 0;
 	}
 	if (sw.second < 59){
 		sw.second++;
 		everyInterrupt();
-		return;
 	} else {
 		sw.second = 0;
 	}
 	if (sw.minute < 59){
 		sw.minute++;
 		everyInterrupt();
-		return;
 	} else {
 		sw.minute = 0;
 	}
 
 	sw.hour++;
+
+	if (blinkPtr) { 
+		blinkPtr->counter++; 
+		if (blinkPtr->counter >= blinkPtr->intervalMS) { 
+			blinkPtr->counter = 0; 
+			blinkPtr->state ^= 1; 
+		} 
+	}
+	
 	everyInterrupt();
 	return;// Clear interrupt bit
 }

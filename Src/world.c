@@ -70,39 +70,15 @@ void drawWalls(Point* positions, uint8_t numPoints, uint8_t closePath, World* wo
     } 
 }
 
-Point getSpriteSize(const char *sprite)
-{
-    Point size = {0, 1}; // width, height
-    int16_t currentWidth = 0;
-
-    for (const char *p = sprite; *p; p++) {
-        if (*p == '\n') {
-            size.y++;
-            if (currentWidth > size.x)
-                size.x = currentWidth;
-            currentWidth = 0;
-        } else {
-            currentWidth++;
-        }
-    }
-
-    if (currentWidth > size.x)
-        size.x = currentWidth;
-
-    return size;
-}
-
-
-void drawObstacle(Point position, const char* sprite, World* world)
+void drawObstacle(Point position, const char* sprite, uint8_t width, uint8_t height, World* world)
 {
     printCp850At(position.x, position.y, sprite);
-    Point size = getSpriteSize(sprite);
 
-    // corners
+    // Compute corners using the provided width/height
     Point topLeft     = position;
-    Point topRight    = (Point){ position.x + size.x - 1, position.y };
-    Point bottomLeft  = (Point){ position.x, position.y + size.y - 1 };
-    Point bottomRight = (Point){ position.x + size.x - 1, position.y + size.y - 1 };
+    Point topRight    = (Point){ position.x + width  - 1, position.y };
+    Point bottomLeft  = (Point){ position.x, position.y + height - 1 };
+    Point bottomRight = (Point){ position.x + width  - 1, position.y + height - 1 };
 
     // Add 4 wall segments
     if (world->count < MAX_WALL_SEGMENTS)
@@ -117,6 +93,7 @@ void drawObstacle(Point position, const char* sprite, World* world)
     if (world->count < MAX_WALL_SEGMENTS)
         world->segments[world->count++] = (WallSegment){ bottomLeft, topLeft };
 }
+
 
 uint8_t rectOverlap(Rect a, Rect b)
 {

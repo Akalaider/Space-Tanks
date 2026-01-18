@@ -6,23 +6,73 @@
 #include "io.h"
 #include "timer.h"
 #include "lcd.h"
+#include "analogue.h"
+#include "keyboard.h"
+#include "analogue.h"
 
 int main(void)
 {
-	uint8_t lcd[512] = {0};
-	char time[16];
+	char textbuffer[8];
+	ball_t ball;
+	uint16_t adc;
 	uart_init( 9600 );
-	initTimer(1000, 1);
-	lcd_init();
-	lcd_write_string(&lcd, "Hello,", 0);
-	lcd_write_string(&lcd, "world!", 1);
-	lcd_push_buffer(lcd);
-	while(1){
-		setlcdFlag(1);
-		lcd_update(&lcd);
-		printTime(time);
-		printf(time);
+	clrscr();
+	startGame();
+	setupClock();
+	initAnalogue();
+	while (1){
+		adc = readAnalogue(1);
+		gotoxy(10,10);
+		printf("ADC channel 1: %04d",adc);
+		adc = readAnalogue(2);
+		gotoxy(10,11);
+		printf("ADC channel 2: %04d",adc);
 	}
+
+
+//	while (1){
+//		readkeys(textbuffer);
+//		gotoxy(ball.x, ball.y);
+//		printf("%c", 32);
+//		gotoxy(2,2);
+//		if (charInString(textbuffer, 'w')){
+//			ball.y -= 1;
+//			printf("w");
+//		}
+//		if (charInString(textbuffer, 's')){
+//			ball.y += 1;
+//			printf("s");
+//		}
+//		if (charInString(textbuffer, 'a')){
+//			ball.x -= 1;
+//			printf("a");
+//		}
+//		if (charInString(textbuffer, 'd')){
+//			ball.x += 1;
+//			printf("d");
+//		}
+//		gotoxy(ball.x,ball.y);
+//		printf("o");
+//	}
+
+
+
+//	uint8_t lcd[512] = {0};
+//	char time[16];
+//	uart_init( 9600 );
+//	initTimer(1000, 1);
+//	lcd_init();
+//	lcd_write_string(&lcd, "Hello,", 0);
+//	lcd_write_string(&lcd, "world!", 1);
+//	lcd_push_buffer(lcd);
+//	while(1){
+//		setlcdFlag(1);
+//		lcd_update(&lcd);
+//		printTime(time);
+//		printf(time);
+//	}
+//
+//	printf("Value = %03d",50);
 
 //	char time[16];
 //	char splittime1[16];

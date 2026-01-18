@@ -1,19 +1,18 @@
 /*
- * analogue.h
+ * keyboard.h
  *
- *  Created on: 13. jan. 2026
+ *  Created on: 15. jan. 2026
  *      Author: adambenali
  */
 
-#ifndef ANALOGUE_H_
-#define ANALOGUE_H_
+#ifndef KEYBOARD_H_
+#define KEYBOARD_H_
 #include <stdint.h>
 #include <stdio.h>
 #include "stm32f30x_conf.h" // STM32 config
 #include "30010_io.h" // Input/output library for this course
 
-void initADC();
-uint16_t readAnalogue(uint8_t channel);
+void readkeys(char *buf);
+uint8_t charInString(char *buf, char n);
 
-
-#endif /* ANALOGUE_H_ */
+#endif /* KEYBOARD_H_ */

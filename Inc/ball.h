@@ -12,6 +12,7 @@ typedef struct {
 int32_t x, y, xv, yv;
 } ball_t;
 
+
 void makeScore();
 void scoreUpdate(uint8_t i);
 int8_t startBallGame();

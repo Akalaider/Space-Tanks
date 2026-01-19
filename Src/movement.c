@@ -103,3 +103,10 @@ void controlTank(World *world) {
     // (replace with timer later)
     for (volatile uint32_t i = 0; i < 100000; i++);
 }
+int16_t getPlayerX(void) {
+    return tank.position_x >> FP_SCALE;
+}
+
+int16_t getPlayerY(void) {
+    return tank.position_y >> FP_SCALE;
+}

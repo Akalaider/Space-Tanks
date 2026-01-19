@@ -4,90 +4,148 @@
 #include "ansi.h"
 #include "io.h"
 
+// Same fixed‑point scale as player
+#define FP_SCALE 7
 
-// Fixed‑point scale factor (100 = 2 decimal places)
-#define FP_SCALE 100
+// AI speeds (slower than player)
+#define AI_SPEED_X 120
+#define AI_SPEED_Y 80
+#define DIAG_SCALE 71
 
-// Tunable speeds (integer only)
-#define SPEED_X 100 // horizontal speed
-#define SPEED_Y 60 // vertical speed (rows are taller)
-#define DIAG_SCALE 71 // ≈ 1/sqrt(2) * 100
-// Fixed‑point tank position
+// AI state machine
+typedef enum {
+    AI_DIRECT,
+    AI_HUG
+} AIMode;
 
+static AIMode aiMode = AI_DIRECT;
+static int16_t hugDx = 0;
+static int16_t hugDy = 0;
 
-
-
-static const char *sprite = NULL;
-
-static int aiPosX = 120 * FP_SCALE;
-static int aiPosY = 20 * FP_SCALE;
-
-
+// AI tank object
+static object_t aiTank;
+static const char *aiSprite = NULL;
 
 void initAITank(void) {
-    Point p = { aiPosX / FP_SCALE, aiPosY / FP_SCALE };
-    const char *sprite = selectTankSprite((Point){0,1});
-    drawTank(p, sprite);
+    aiTank.type = enemy;
+    aiTank.position_x = 120 << FP_SCALE;
+    aiTank.position_y = 20  << FP_SCALE;
+    aiTank.a = 0;
+    aiTank.b = 0;
+
+    object_t dir = {0};
+    dir.position_y = 1;
+    aiSprite = selectTankSprite(dir);
+
+    drawTank(aiTank, aiSprite);
 }
 
-void moveTankWithVelocity(World *world, int *posX, int *posY, int dx, int dy) {
-    if (dx == 0 && dy == 0)
-        return;
-
-    Point oldPos = { *posX / FP_SCALE, *posY / FP_SCALE };
+static void moveAI(World *world, int16_t dx, int16_t dy) {
+    // Erase old
+    Point oldPos = { aiTank.position_x >> FP_SCALE, aiTank.position_y >> FP_SCALE };
     eraseTank(oldPos);
 
-    int nextX = *posX + dx;
-    int nextY = *posY + dy;
+    int32_t nextX = aiTank.position_x + dx;
+    int32_t nextY = aiTank.position_y + dy;
 
-    Point nextPos = { nextX / FP_SCALE, nextY / FP_SCALE };
+    Point nextPos = { nextX >> FP_SCALE, nextY >> FP_SCALE };
 
-    CollisionSide col = checkWallCollision(nextPos, TANK_RADIUS, world);
-
-    if (col == COLLISION_NONE) {
-        *posX = nextX;
-        *posY = nextY;
+    if (checkWallCollisionAABB(nextPos, world) == COLLISION_NONE) {
+        aiTank.position_x = nextX;
+        aiTank.position_y = nextY;
     } else {
-        if (col == COLLISION_LEFT || col == COLLISION_RIGHT) {
-            int testY = *posY + dy;
-            Point p = { *posX / FP_SCALE, testY / FP_SCALE };
-            if (checkWallCollision(p, TANK_RADIUS, world) == COLLISION_NONE)
-                *posY = testY;
+        // Try X only
+        Point tryX = { (aiTank.position_x + dx) >> FP_SCALE, aiTank.position_y >> FP_SCALE };
+        if (checkWallCollisionAABB(tryX, world) == COLLISION_NONE) {
+            aiTank.position_x += dx;
         }
-        if (col == COLLISION_TOP || col == COLLISION_BOTTOM) {
-            int testX = *posX + dx;
-            Point p = { testX / FP_SCALE, *posY / FP_SCALE };
-            if (checkWallCollision(p, TANK_RADIUS, world) == COLLISION_NONE)
-                *posX = testX;
+
+        // Try Y only
+        Point tryY = { aiTank.position_x >> FP_SCALE, (aiTank.position_y + dy) >> FP_SCALE };
+        if (checkWallCollisionAABB(tryY, world) == COLLISION_NONE) {
+            aiTank.position_y += dy;
         }
     }
 
-    Point drawPos = { *posX / FP_SCALE, *posY / FP_SCALE };
-    const char *sprite = selectTankSprite((Point){ dx, dy });
-    drawTank(drawPos, sprite);
+    // Update velocity
+    aiTank.a = dx;
+    aiTank.b = dy;
+
+    // Update sprite
+    object_t dir = {0};
+    dir.position_x = dx;
+    dir.position_y = dy;
+    aiSprite = selectTankSprite(dir);
+
+    drawTank(aiTank, aiSprite);
 }
 
 void controlAITank(World *world) {
-    int dx = 0, dy = 0;
-
-    int aiX = aiPosX / FP_SCALE;
-    int aiY = aiPosY / FP_SCALE;
+    int aiX = aiTank.position_x >> FP_SCALE;
+    int aiY = aiTank.position_y >> FP_SCALE;
 
     int playerX = getPlayerX();
     int playerY = getPlayerY();
 
-    // Bevæg mod spilleren
-    if (aiX < playerX) dx =  SPEED_X;
-    else if (aiX > playerX) dx = -SPEED_X;
+    int16_t dx = 0;
+    int16_t dy = 0;
 
-    if (aiY < playerY) dy =  SPEED_Y;
-    else if (aiY > playerY) dy = -SPEED_Y;
+    // Direct vector toward player
+    if (aiX < playerX) dx =  AI_SPEED_X;
+    else if (aiX > playerX) dx = -AI_SPEED_X;
 
-    // Normaliser diagonaler
+    if (aiY < playerY) dy =  AI_SPEED_Y;
+    else if (aiY > playerY) dy = -AI_SPEED_Y;
+
+    // Normalize diagonal
     if (dx != 0 && dy != 0) {
-        dx = dx * DIAG_SCALE / 100;
-        dy = dy * DIAG_SCALE / 100;
+        dx = (dx * DIAG_SCALE) >> 7;
+        dy = (dy * DIAG_SCALE) >> 7;
     }
 
-    moveTankWithVelocity(world, &aiPosX, &aiPosY, dx, dy);
+    // --- MODE: DIRECT ----------------------------------------------------
+    if (aiMode == AI_DIRECT) {
+        int32_t nextX = aiTank.position_x + dx;
+        int32_t nextY = aiTank.position_y + dy;
+        Point nextPos = { nextX >> FP_SCALE, nextY >> FP_SCALE };
+
+        if (checkWallCollisionAABB(nextPos, world) == COLLISION_NONE) {
+            moveAI(world, dx, dy);
+            return;
+        }
+
+        // Start wall hugging
+        if (dx != 0) {
+            hugDx = 0;
+            hugDy = (playerY > aiY) ? AI_SPEED_Y : -AI_SPEED_Y;
+        } else {
+            hugDy = 0;
+            hugDx = (playerX > aiX) ? AI_SPEED_X : -AI_SPEED_X;
+        }
+
+        aiMode = AI_HUG;
+    }
+
+    // --- MODE: HUG -------------------------------------------------------
+    if (aiMode == AI_HUG) {
+        int32_t oldX = aiTank.position_x;
+        int32_t oldY = aiTank.position_y;
+
+        moveAI(world, hugDx, hugDy);
+
+        // If stuck, reverse hug direction
+        if (aiTank.position_x == oldX && aiTank.position_y == oldY) {
+            hugDx = -hugDx;
+            hugDy = -hugDy;
+        }
+
+        // Check if direct path is open again
+        int32_t nextX = aiTank.position_x + dx;
+        int32_t nextY = aiTank.position_y + dy;
+        Point nextPos = { nextX >> FP_SCALE, nextY >> FP_SCALE };
+
+        if (checkWallCollisionAABB(nextPos, world) == COLLISION_NONE) {
+            aiMode = AI_DIRECT;
+        }
+    }
 }

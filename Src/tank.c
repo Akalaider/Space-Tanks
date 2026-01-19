@@ -1,7 +1,4 @@
 #include "30010_io.h" // Input/output library for this course
-#include "world.h"
-#include "ansi.h"
-#include "art.h"
 #include "tank.h"
 
 #define FP_SCALE 7  // Must match the value in movement.c
@@ -24,7 +21,9 @@ void drawTank(object_t tank, const char *sprite)
         }
 
         gotoxy(x + col - TANK_WIDTH/2, y + row - TANK_HEIGHT/2);
+        fgcolor(10);
         printf("%c", sprite[i]);
+        fgcolor(15);
         col++;
     }
 }

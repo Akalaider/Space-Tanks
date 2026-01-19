@@ -173,6 +173,26 @@ static const char multiplayer[] =
 "│                                                                                          │\n"
 "╚──────────────────────────────────────────────────────────────────────────────────────────╝\n";
 
+static const char coop[] =
+"╔──────────────────────────────────────────╗\n"
+"│  ██████╗ ██████╗        ██████╗ ██████╗  │\n"
+"│ ██╔════╝██╔═══██╗      ██╔═══██╗██╔══██╗ │\n"
+"│ ██║     ██║   ██║█████╗██║   ██║██████╔╝ │\n"
+"│ ██║     ██║   ██║╚════╝██║   ██║██╔═══╝  │\n"
+"│ ╚██████╗╚██████╔╝      ╚██████╔╝██║      │\n"
+"│  ╚═════╝ ╚═════╝        ╚═════╝ ╚═╝      │\n"
+"╚──────────────────────────────────────────╝\n";
+
+static const char versus[] =
+"╔────────────────────────────────────────────────────╗\n"
+"│ ██╗   ██╗███████╗██████╗ ███████╗██╗   ██╗███████╗ │\n"
+"│ ██║   ██║██╔════╝██╔══██╗██╔════╝██║   ██║██╔════╝ │\n"
+"│ ██║   ██║█████╗  ██████╔╝███████╗██║   ██║███████╗ │\n"
+"│ ╚██╗ ██╔╝██╔══╝  ██╔══██╗╚════██║██║   ██║╚════██║ │\n"
+"│  ╚████╔╝ ███████╗██║  ██║███████║╚██████╔╝███████║ │\n"
+"│   ╚═══╝  ╚══════╝╚═╝  ╚═╝╚══════╝ ╚═════╝ ╚══════╝ │\n"
+"╚────────────────────────────────────────────────────╝\n";
+
 static const char arrowLeft[] =
 "       ███\n"
 "     ███░ \n"
@@ -228,6 +248,8 @@ const char *getHighscores(void)    { return highscores; }
 const char *getBack(void)          { return back; }
 const char *getSingleplayer(void)  { return singleplayer; }
 const char *getMultiplayer(void)   { return multiplayer; }
+const char *getCoop(void)          { return coop; }
+const char *getVersus(void)        { return versus; }
 const char *getArrowLeft(void)     { return arrowLeft; }
 const char *getArrowRight(void)    { return arrowRight; }
 const char *getArrowDown(void)     { return arrowDown; }

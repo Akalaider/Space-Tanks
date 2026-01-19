@@ -30,6 +30,8 @@ const char *getHighscores(void);
 const char *getBack(void);
 const char *getSingleplayer(void);
 const char *getMultiplayer(void);
+const char *getCoop(void);
+const char *getVersus(void);
 const char *getArrowLeft(void);
 const char *getArrowRight(void);
 const char *getArrowDown(void);

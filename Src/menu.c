@@ -12,6 +12,9 @@ typedef enum {
     MENU_GAMEMODE_RIGHT = 2,
     MENU_GAMEMODE_BACK = 3,
     MENU_HIGHSCORES = 4,
+    MENU_MULTIPLAYER_LEFT = 5,
+    MENU_MULTIPLAYER_RIGHT = 6,
+    MENU_MULTIPLAYER_BACK = 7,
 } MenuState;
 
 typedef struct {
@@ -50,10 +53,12 @@ static void drawMainMenu(void) {
     printCp850At(76, 5, getTitleArt());
     printCp850At(28, 20, getPlayGame());
     printCp850At(30, 30, getHighscores());
-    gotoxy(30, 40);
-    printf(" > Use joystick to navigate menu <");
-    gotoxy(30, 42);
-    printf("   CENTER = Select  |  UP = ^  |  DOWN = v");
+    gotoxy(30, 65);
+    fgcolor(13);
+    printf("Use joystick to navigate menu");
+    gotoxy(30, 67);
+    printf("CENTER = Select");
+    fgcolor(15);
 }
 
 static void drawGamemodeMenu(void) {
@@ -62,14 +67,38 @@ static void drawGamemodeMenu(void) {
     printCp850At(3, 30, getSingleplayer());
     printCp850At(135, 30, getMultiplayer());
     printCp850At(BACK_BUTTON_X, BACK_BUTTON_Y, getBack());
+    gotoxy(30, 65);
+    fgcolor(13);
+    printf("Use joystick to navigate menu");
+    gotoxy(30, 67);
+    printf("CENTER = Select");
+    fgcolor(15);
+}
+
+static void drawMultiplayerMenu(void) {
+    clrscr();
+    printCp850At(76, 5, getTitleArt());
+    printCp850At(45, 30, getCoop());
+    printCp850At(145, 30, getVersus());
+    printCp850At(BACK_BUTTON_X, BACK_BUTTON_Y, getBack());
+    gotoxy(30, 65);
+    fgcolor(13);
+    printf("Use joystick to navigate menu");
+    gotoxy(30, 67);
+    printf("CENTER = Select");
+    fgcolor(15);
 }
 
 static void drawHighscoresMenu(void) {
     clrscr();
     printCp850At(76, 5, getTitleArt());
-    gotoxy(30, 40);
+    gotoxy(30, 20);
     printf("Highscores: xxx");
     printCp850At(BACK_BUTTON_X, BACK_BUTTON_Y, getBack());
+    gotoxy(30, 67);
+    fgcolor(13);
+    printf("CENTER = Go back");
+    fgcolor(15);
 }
 
 // Menu Item Helpers
@@ -101,6 +130,33 @@ static MenuItem getGamemodeRightMenuItem(void) {
 }
 
 static MenuItem getGamemodeBackMenuItem(void) {
+    return (MenuItem){
+        .x = GAMEMODE_MENU_BACK_X,
+        .y = GAMEMODE_MENU_BACK_Y,
+        .cursor = getArrowDown(),
+        .blankCursor = getBlankArrow()
+    };
+}
+
+static MenuItem getMultiplayerLeftMenuItem(void) {
+    return (MenuItem){
+        .x = GAMEMODE_MENU_LEFT_X,
+        .y = GAMEMODE_MENU_Y,
+        .cursor = getArrowLeft(),
+        .blankCursor = getBlankArrow()
+    };
+}
+
+static MenuItem getMultiplayerRightMenuItem(void) {
+    return (MenuItem){
+        .x = GAMEMODE_MENU_RIGHT_X,
+        .y = GAMEMODE_MENU_Y,
+        .cursor = getArrowRight(),
+        .blankCursor = getBlankArrow()
+    };
+}
+
+static MenuItem getMultiplayerBackMenuItem(void) {
     return (MenuItem){
         .x = GAMEMODE_MENU_BACK_X,
         .y = GAMEMODE_MENU_BACK_Y,
@@ -161,9 +217,33 @@ static void handleMainMenuInput(BlinkController *b, uint8_t joyState,
             b->counter = 0;
             printCp850At(b->x, b->y, gamemodeItem.cursor);
         } else if (b->y == MAIN_MENU_HIGHSCORE_Y) {
-            // TODO: Show highscores
+            *currentMenu = MENU_HIGHSCORES;
+            drawHighscoresMenu();
+            MenuItem highscoresItem = getHighscoresBackMenuItem();
+            b->x = highscoresItem.x;
+            b->y = highscoresItem.y;
+            b->state = 1;
+            b->counter = 0;
         }
     }
+}
+
+static void handleHighscoresMenuInput(BlinkController *b, uint8_t joyState,
+                                      const char *cursor, const char *blankCursor,
+                                      MenuState *currentMenu) {
+    if (*currentMenu == MENU_HIGHSCORES) {
+        if (joyState & JOY_CENTER) {
+            *currentMenu = MENU_MAIN;
+            drawMainMenu();
+            MenuItem mainItem = getMainMenuItem();
+            b->x = mainItem.x;
+            b->y = mainItem.y;
+            b->state = 1;
+            b->counter = 0;
+            printCp850At(b->x, b->y, mainItem.cursor); 
+        }
+    }
+    return;
 }
 
 static void handleGamemodeMenuInput(BlinkController *b, uint8_t joyState,
@@ -229,12 +309,83 @@ static void handleGamemodeMenuInput(BlinkController *b, uint8_t joyState,
         *currentMenu = MENU_GAMEMODE_BACK;
     }
     
-    // Select current gamemode
+    // Select multiplayer to go to multiplayer submenu
+    if ((joyState & JOY_CENTER) && b->x == GAMEMODE_MENU_RIGHT_X) {
+        *currentMenu = MENU_MULTIPLAYER_LEFT;
+        drawMultiplayerMenu();
+        MenuItem multiplayerItem = getMultiplayerLeftMenuItem();
+        b->x = multiplayerItem.x;
+        b->y = multiplayerItem.y;
+        b->state = 1;
+        b->counter = 0;
+        printCp850At(b->x, b->y, multiplayerItem.cursor);
+    }
+}
+
+static void handleMultiplayerMenuInput(BlinkController *b, uint8_t joyState,
+                                       const char *cursor, const char *blankCursor,
+                                       MenuState *currentMenu) {
+    // If on back arrow
+    if (*currentMenu == MENU_MULTIPLAYER_BACK) {
+        // Navigate up from back arrow
+        if (joyState & JOY_LEFT) {
+            MenuItem leftItem = getMultiplayerLeftMenuItem();
+            updateSelectorPosition(b, GAMEMODE_MENU_LEFT_X, GAMEMODE_MENU_Y,
+                                  leftItem.cursor, leftItem.blankCursor);
+            *currentMenu = MENU_MULTIPLAYER_LEFT;
+        }
+        if (joyState & JOY_RIGHT) {
+            MenuItem rightItem = getMultiplayerRightMenuItem();
+            updateSelectorPosition(b, GAMEMODE_MENU_RIGHT_X, GAMEMODE_MENU_Y,
+                                  rightItem.cursor, rightItem.blankCursor);
+            *currentMenu = MENU_MULTIPLAYER_RIGHT;
+        }
+
+        // Center to go back to gamemode menu
+        if (joyState & JOY_CENTER) {
+            *currentMenu = MENU_GAMEMODE_LEFT;
+            drawGamemodeMenu();
+            MenuItem gamemodeItem = getGamemodeLeftMenuItem();
+            b->x = gamemodeItem.x;
+            b->y = gamemodeItem.y;
+            b->state = 1;
+            b->counter = 0;
+            printCp850At(b->x, b->y, gamemodeItem.cursor);
+        }
+        return;
+    }
+    
+    // If on left or right arrows
+    // Navigate left to coop
+    if ((joyState & JOY_LEFT) && b->x != GAMEMODE_MENU_LEFT_X) {
+        MenuItem leftItem = getMultiplayerLeftMenuItem();
+        updateSelectorPosition(b, GAMEMODE_MENU_LEFT_X, GAMEMODE_MENU_Y, 
+                              leftItem.cursor, leftItem.blankCursor);
+        *currentMenu = MENU_MULTIPLAYER_LEFT;
+    }
+    
+    // Navigate right to versus
+    if ((joyState & JOY_RIGHT) && b->x != GAMEMODE_MENU_RIGHT_X) {
+        MenuItem rightItem = getMultiplayerRightMenuItem();
+        updateSelectorPosition(b, GAMEMODE_MENU_RIGHT_X, GAMEMODE_MENU_Y,
+                              rightItem.cursor, rightItem.blankCursor);
+        *currentMenu = MENU_MULTIPLAYER_RIGHT;
+    }
+    
+    // Navigate down to back arrow
+    if (joyState & JOY_DOWN) {
+        MenuItem backItem = getMultiplayerBackMenuItem();
+        updateSelectorPosition(b, GAMEMODE_MENU_BACK_X, GAMEMODE_MENU_BACK_Y,
+                              backItem.cursor, backItem.blankCursor);
+        *currentMenu = MENU_MULTIPLAYER_BACK;
+    }
+    
+    // Select current mode
     if (joyState & JOY_CENTER) {
         if (b->x == GAMEMODE_MENU_LEFT_X) {
-            // TODO: Start singleplayer
+            // TODO: Start coop mode
         } else if (b->x == GAMEMODE_MENU_RIGHT_X) {
-            // TODO: Start multiplayer
+            // TODO: Start versus mode
         }
     }
 }
@@ -253,9 +404,17 @@ static void processMenuInput(BlinkController *b, uint8_t joyState,
             handleGamemodeMenuInput(b, joyState, currentItem->cursor,
                                    currentItem->blankCursor, currentMenu);
             break;
+            
+        case MENU_MULTIPLAYER_LEFT:
+        case MENU_MULTIPLAYER_RIGHT:
+        case MENU_MULTIPLAYER_BACK:
+            handleMultiplayerMenuInput(b, joyState, currentItem->cursor,
+                                      currentItem->blankCursor, currentMenu);
+            break;
+            
         case MENU_HIGHSCORES:
-            handleGamemodeMenuInput(b, joyState, currentItem->cursor,
-                                    currentItem->blankCursor, currentMenu);
+            handleHighscoresMenuInput(b, joyState, currentItem->cursor,
+                                     currentItem->blankCursor, currentMenu);
             break;
     }
 }
@@ -271,6 +430,12 @@ static MenuItem getCurrentMenuItem(MenuState currentMenu) {
             return getGamemodeRightMenuItem();
         case MENU_GAMEMODE_BACK:
             return getGamemodeBackMenuItem();
+        case MENU_MULTIPLAYER_LEFT:
+            return getMultiplayerLeftMenuItem();
+        case MENU_MULTIPLAYER_RIGHT:
+            return getMultiplayerRightMenuItem();
+        case MENU_MULTIPLAYER_BACK:
+            return getMultiplayerBackMenuItem();
         case MENU_HIGHSCORES:
             return getHighscoresBackMenuItem();
         default:

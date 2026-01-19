@@ -4,10 +4,10 @@
 #include "art.h"
 #include "tank.h"
 
-void drawTank(Point pos, const char *sprite)
+void drawTank(object_t tank, const char *sprite)
 {
-    int16_t x = pos.x;
-    int16_t y = pos.y;
+    int16_t x = tank.position_x;
+    int16_t y = tank.position_y;
 
     uint8_t row = 0;
     uint8_t col = 0;
@@ -45,11 +45,9 @@ const char *selectTankSprite(Point vel)
     int16_t absX = vel.x < 0 ? -vel.x : vel.x;
     int16_t absY = vel.y < 0 ? -vel.y : vel.y;
     
-    // Determine primary direction based on which component is larger
-    // Use 8 sectors: each 45° wide
-    
-    // If absX is much larger, it's horizontal
-    // If absY is much larger, it's vertical  
+    // Determine primary direction based on which component is larger    
+    // If absX is larger it's horizontal
+    // If absY is larger it's vertical  
     // Otherwise it's diagonal
     
     // absX > 2*absY means very horizontal (within ±22.5° of horizontal)
@@ -57,27 +55,27 @@ const char *selectTankSprite(Point vel)
     
     if (vel.y < 0) {  // Upper half
         if (vel.x > 0) {  // Upper right quadrant
-            if (absX > absY * 2) return getTankRight;
-            if (absY > absX * 2) return getTankUp;
-            return getTankUpRight;
+            if (absX > absY * 2) return getTankRight();
+            if (absY > absX * 2) return getTankUp();
+            return getTankUpRight();
         } else if (vel.x < 0) {  // Upper left quadrant
-            if (absX > absY * 2) return getTankLeft;
-            if (absY > absX * 2) return getTankUp;
-            return getTankUpLeft;
+            if (absX > absY * 2) return getTankLeft();
+            if (absY > absX * 2) return getTankUp();
+            return getTankUpLeft();
         } else {
-            return getTankUp;
+            return getTankUp();
         }
     } else {  // Lower half
         if (vel.x > 0) {  // Lower right quadrant
-            if (absX > absY * 2) return getTankRight;
-            if (absY > absX * 2) return getTankDown;
-            return getTankDownRight;
+            if (absX > absY * 2) return getTankRight();
+            if (absY > absX * 2) return getTankDown();
+            return getTankDownRight();
         } else if (vel.x < 0) {  // Lower left quadrant
-            if (absX > absY * 2) return getTankLeft;
-            if (absY > absX * 2) return getTankDown;
-            return getTankDownLeft;
+            if (absX > absY * 2) return getTankLeft();
+            if (absY > absX * 2) return getTankDown();
+            return getTankDownLeft();
         } else {
-            return getTankDown;
+            return getTankDown();
         }
     }
 }

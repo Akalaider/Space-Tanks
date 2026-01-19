@@ -7,14 +7,14 @@
 // Fixed‑point scale factor (100 = 2 decimal places) 
 #define FP_SCALE 100 
 
-// Tunable speeds (integer only) 
-#define SPEED_X 100 // horizontal speed 
-#define SPEED_Y 60 // vertical speed (rows are taller) 
+// Tunable speeds 
+#define SPEED_X 200 // horizontal speed 
+#define SPEED_Y 120 // vertical speed (rows are taller) 
 #define DIAG_SCALE 71 // ≈ 1/sqrt(2) * 100
 
 // Fixed‑point tank position 
-static int posX = 10 * FP_SCALE; 
-static int posY = 61 * FP_SCALE;
+static int16_t posX = 10 * FP_SCALE; 
+static int16_t posY = 61 * FP_SCALE;
 
 static const char *sprite = NULL;
 
@@ -48,7 +48,7 @@ void controlTank(World *world) {
         dy = dy * DIAG_SCALE / 100;
     }
 
-    // If no movement, skip everything
+    // If no movement
     if (dx == 0 && dy == 0)
         return;
 
@@ -57,8 +57,8 @@ void controlTank(World *world) {
     eraseTank(oldPos);
 
     // Compute next fixed‑point position
-    int nextX = posX + dx;
-    int nextY = posY + dy;
+    int16_t nextX = posX + dx;
+    int16_t nextY = posY + dy;
 
     // Convert next position to integer
     Point nextPos = { nextX / FP_SCALE, nextY / FP_SCALE };

@@ -20,7 +20,8 @@ void level1(void) {
     World world = {0};
     
     drawWalls(outerWall, 4, 1, &world);
-    
+    drawObstacle((Point){30, 40}, getArrowRight(), 10, 8, &world);
+        
     initTank();
     // Game loop
     while (1) {

@@ -254,7 +254,6 @@ static MenuItem getCurrentMenuItem(MenuState currentMenu) {
     }
 }
 
-// Main Menu Loop
 void drawTitleScreen(void) {
     // Initialize hardware
     initTimer(6400000, 0);
@@ -279,15 +278,12 @@ void drawTitleScreen(void) {
     
     timer_attachBlink(&selectorBlink);
     
-    // Draw initial screen
     drawMainMenu();
     
-    // Main menu loop
     uint8_t lastBlinkState = selectorBlink.state;
-        uint8_t lastJoyState = 0;
+    uint8_t lastJoyState = 0;
     
     while (1) {
-        // Read input
         uint8_t joyState = readJoystick();
         setLED(joyState);
         

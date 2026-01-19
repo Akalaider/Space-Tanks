@@ -2,11 +2,12 @@
 #include "world.h"
 #include "ansi.h"
 #include "art.h"
+#include "object.h"
 
 #define TANK_WIDTH 8
 #define TANK_HEIGHT 5
 #define TANK_RADIUS 4   // square hitbox
 
-void drawTank(Point pos, const char *sprite);
+void drawTank(object_t tank, const char *sprite);
 void eraseTank(Point pos);
-const char *selectTankSprite(Point vel);
+const char *selectTankSprite(object_t tank);

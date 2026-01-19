@@ -5,7 +5,7 @@
 #include "io.h"
 
 // Fixed‑point scale factor (100 = 2 decimal places) 
-#define FP_SCALE 100 
+#define FP_SCALE 7
 
 // Tunable speeds 
 #define SPEED_X 200 // horizontal speed 
@@ -27,8 +27,8 @@ void initTank(void) {
 void controlTank(World *world) {
     uint8_t joyState = readJoystick();
 
-    int dx = 0;
-    int dy = 0;
+    int16_t dx = 0;
+    int16_t dy = 0;
 
     // Build velocity in fixed‑point units
     if (joyState & JOY_UP)    dy = -SPEED_Y;
@@ -44,16 +44,15 @@ void controlTank(World *world) {
 
     // Normalize diagonal movement
     if (dx != 0 && dy != 0) {
-        dx = dx * DIAG_SCALE / 100;
-        dy = dy * DIAG_SCALE / 100;
+        dx = ((dx * DIAG_SCALE) >> 7) + ((dx * DIAG_SCALE) >> 9) + ((dx * DIAG_SCALE) >> 13) + ((dx * DIAG_SCALE) >> 14) + ((dx * DIAG_SCALE) >> 15) + ((dx * DIAG_SCALE) >> 16); // dividing by 100 with sum of bit shift
+        dy = ((dy * DIAG_SCALE) >> 7) + ((dy * DIAG_SCALE) >> 9) + ((dy * DIAG_SCALE) >> 13) + ((dy * DIAG_SCALE) >> 14) + ((dy * DIAG_SCALE) >> 15) + ((dy * DIAG_SCALE) >> 16); 
     }
-
     // If no movement
     if (dx == 0 && dy == 0)
         return;
 
     // Erase old tank
-    Point oldPos = { posX / FP_SCALE, posY / FP_SCALE };
+    Point oldPos = { posX << FP_SCALE, posY << FP_SCALE };
     eraseTank(oldPos);
 
     // Compute next fixed‑point position
@@ -61,7 +60,7 @@ void controlTank(World *world) {
     int16_t nextY = posY + dy;
 
     // Convert next position to integer
-    Point nextPos = { nextX / FP_SCALE, nextY / FP_SCALE };
+    Point nextPos = { nextX << FP_SCALE, nextY << FP_SCALE };
 
     // Try full movement
     if (checkWallCollisionAABB(nextPos, world) == COLLISION_NONE) {
@@ -69,13 +68,13 @@ void controlTank(World *world) {
         posY = nextY;
     } else {
         // Try X-only movement
-        Point tryX = { (posX + dx) / FP_SCALE, posY / FP_SCALE };
+        Point tryX = { (posX + dx) << FP_SCALE, posY << FP_SCALE };
         if (checkWallCollisionAABB(tryX, world) == COLLISION_NONE) {
             posX += dx;
         }
 
         // Try Y-only movement
-        Point tryY = { posX / FP_SCALE, (posY + dy) / FP_SCALE };
+        Point tryY = { posX << FP_SCALE, (posY + dy) << FP_SCALE };
         if (checkWallCollisionAABB(tryY, world) == COLLISION_NONE) {
             posY += dy;
         }
@@ -83,7 +82,7 @@ void controlTank(World *world) {
 
 
     // Draw new tank
-    Point drawPos = { posX / FP_SCALE, posY / FP_SCALE };
+    Point drawPos = { posX << FP_SCALE, posY << FP_SCALE };
     sprite = selectTankSprite((Point){ dx, dy });
     drawTank(drawPos, sprite);
 

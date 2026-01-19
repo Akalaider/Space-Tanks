@@ -31,19 +31,19 @@ void eraseTank(Point pos)
 {
     for (uint16_t row = 0; row < TANK_HEIGHT; row++) {
         for (uint16_t col = 0; col < TANK_WIDTH; col++) {
-            gotoxy(pos.x + col - TANK_WIDTH/2, pos.y + row - TANK_HEIGHT/2);
+            gotoxy(pos.x + col - TANK_WIDTH << 1, pos.y + row - TANK_HEIGHT << 1);
             printf(" ");
         }
     }
 }
 
 // Choose sprite based on velocity
-const char *selectTankSprite(Point vel)
+const char *selectTankSprite(object_t tank)
 {
-    if (vel.x == 0 && vel.y == 0) return getTankUp;
+    if (tank.position_x == 0 && tank.position_y == 0) return getTankUp;
     
-    int16_t absX = vel.x < 0 ? -vel.x : vel.x;
-    int16_t absY = vel.y < 0 ? -vel.y : vel.y;
+    int16_t absX = tank.position_x < 0 ? -tank.position_x : tank.position_x;
+    int16_t absY = tank.position_y < 0 ? -tank.position_y : tank.position_y;
     
     // Determine primary direction based on which component is larger    
     // If absX is larger it's horizontal
@@ -53,12 +53,12 @@ const char *selectTankSprite(Point vel)
     // absX > 2*absY means very horizontal (within ±22.5° of horizontal)
     // absY > 2*absX means very vertical (within ±22.5° of vertical)
     
-    if (vel.y < 0) {  // Upper half
-        if (vel.x > 0) {  // Upper right quadrant
+    if (tank.position_y < 0) {  // Upper half
+        if (tank.position_x > 0) {  // Upper right quadrant
             if (absX > absY * 2) return getTankRight();
             if (absY > absX * 2) return getTankUp();
             return getTankUpRight();
-        } else if (vel.x < 0) {  // Upper left quadrant
+        } else if (tank.position_x < 0) {  // Upper left quadrant
             if (absX > absY * 2) return getTankLeft();
             if (absY > absX * 2) return getTankUp();
             return getTankUpLeft();
@@ -66,11 +66,11 @@ const char *selectTankSprite(Point vel)
             return getTankUp();
         }
     } else {  // Lower half
-        if (vel.x > 0) {  // Lower right quadrant
+        if (tank.position_x > 0) {  // Lower right quadrant
             if (absX > absY * 2) return getTankRight();
             if (absY > absX * 2) return getTankDown();
             return getTankDownRight();
-        } else if (vel.x < 0) {  // Lower left quadrant
+        } else if (tank.position_x < 0) {  // Lower left quadrant
             if (absX > absY * 2) return getTankLeft();
             if (absY > absX * 2) return getTankDown();
             return getTankDownLeft();

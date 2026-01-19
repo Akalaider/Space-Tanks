@@ -100,3 +100,10 @@ void controlTank(World *world) {
     // Draw new tank
     drawTank(tank, sprite);
 }
+int16_t getPlayerX(void) {
+    return tank.position_x >> FP_SCALE;
+}
+
+int16_t getPlayerY(void) {
+    return tank.position_y >> FP_SCALE;
+}

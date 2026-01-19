@@ -23,8 +23,10 @@ void level1(void) {
     drawObstacle((Point){30, 40}, getArrowRight(), 10, 8, &world);
         
     initTank();
+    initAITank();
     // Game loop
     while (1) {
        controlTank(&world);
+       controlAITank(&world);
     }
 }

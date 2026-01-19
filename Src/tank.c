@@ -11,7 +11,7 @@ void drawTank(object_t tank, const char *sprite)
 
     uint8_t row = 0;
     uint8_t col = 0;
-
+    fgcolor(10);
     for (uint8_t i = 0; sprite[i] != '\0'; i++) {
 
         if (sprite[i] == '\n') {
@@ -20,12 +20,11 @@ void drawTank(object_t tank, const char *sprite)
             continue;
         }
 
-        gotoxy(x + col - TANK_WIDTH/2, y + row - TANK_HEIGHT/2);
-        fgcolor(10);
+        gotoxy(x + col - (TANK_WIDTH >> 1), y + row - (TANK_HEIGHT >> 1));
         printf("%c", sprite[i]);
-        fgcolor(15);
         col++;
     }
+    fgcolor(15);
 }
 
 
@@ -33,7 +32,7 @@ void eraseTank(Point pos)
 {
     for (uint16_t row = 0; row < TANK_HEIGHT; row++) {
         for (uint16_t col = 0; col < TANK_WIDTH; col++) {
-            gotoxy(pos.x + col - TANK_WIDTH/2, pos.y + row - TANK_HEIGHT/2);
+            gotoxy(pos.x + col - (TANK_WIDTH >> 1), pos.y + row - (TANK_HEIGHT >> 1));
             printf(" ");
         }
     }

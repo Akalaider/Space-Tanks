@@ -99,7 +99,4 @@ void controlTank(World *world) {
     
     // Draw new tank
     drawTank(tank, sprite);
-
-    // (replace with timer later)
-    for (volatile uint32_t i = 0; i < 100000; i++);
 }

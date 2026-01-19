@@ -49,6 +49,7 @@ static void blinkSelector(const BlinkController *b, const char *cursor, const ch
 }
 
 static void drawMainMenu(void) {
+    bgcolor(0); // Set background color to black
     clrscr();
     printCp850At(76, 5, getTitleArt());
     printCp850At(28, 20, getPlayGame());
@@ -290,6 +291,7 @@ static void handleGamemodeMenuInput(BlinkController *b, uint8_t joyState,
 
     // Select singleplayer
     if ((joyState & JOY_CENTER) && b->x == GAMEMODE_MENU_LEFT_X) {
+        timer_detachBlink(b);
         level1();
     }
     
@@ -383,8 +385,10 @@ static void handleMultiplayerMenuInput(BlinkController *b, uint8_t joyState,
     // Select current mode
     if (joyState & JOY_CENTER) {
         if (b->x == GAMEMODE_MENU_LEFT_X) {
+            timer_detachBlink(b);
             // TODO: Start coop mode
         } else if (b->x == GAMEMODE_MENU_RIGHT_X) {
+            timer_detachBlink(b);
             // TODO: Start versus mode
         }
     }
@@ -445,8 +449,8 @@ static MenuItem getCurrentMenuItem(MenuState currentMenu) {
 
 void drawTitleScreen(void) {
     // Initialize hardware
-    initTimer(6400000, 0);
-    setupClock();
+    initTimer(1, 0);
+    setupClock(); // For joystick
     setupJoystick();
     setupLED();
     

@@ -15,7 +15,12 @@ typedef struct{
 } stopwatch;
 static volatile stopwatch sw = {0};
 
+void setTankUpdateInterval(uint16_t intervalMS);
+uint8_t tankUpdateDue(void);
+void timer_attachBlink(BlinkController *b);
+void timer_detachBlink(BlinkController *b);
 void initTimer(int16_t interruptMS, int8_t priority);
+void everyInterrupt();
 void TIM1_BRK_TIM15_IRQHandler();
 void printTime(char *s);
 uint8_t getlcdFlag();

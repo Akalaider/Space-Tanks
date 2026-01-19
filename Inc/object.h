@@ -1,10 +1,3 @@
-/*
- * object.h
- *
- *  Created on: 18. jan. 2026
- *      Author: adambenali
- */
-
 #ifndef OBJECT_H_
 #define OBJECT_H_
 #include <stdint.h>

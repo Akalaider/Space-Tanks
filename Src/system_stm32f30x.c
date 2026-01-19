@@ -339,7 +339,7 @@ static void SetSysClock(void)
   while ((RCC->CFGR & (uint32_t)RCC_CFGR_SWS) != (uint32_t)RCC_CFGR_SWS_PLL)
   {
   }
-}
+ }
 
 /**
   * @}

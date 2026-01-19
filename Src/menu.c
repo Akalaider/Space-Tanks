@@ -11,6 +11,7 @@ typedef enum {
     MENU_GAMEMODE_LEFT = 1,
     MENU_GAMEMODE_RIGHT = 2,
     MENU_GAMEMODE_BACK = 3,
+    MENU_HIGHSCORES = 4,
 } MenuState;
 
 typedef struct {
@@ -63,6 +64,14 @@ static void drawGamemodeMenu(void) {
     printCp850At(BACK_BUTTON_X, BACK_BUTTON_Y, getBack());
 }
 
+static void drawHighscoresMenu(void) {
+    clrscr();
+    printCp850At(76, 5, getTitleArt());
+    gotoxy(30, 40);
+    printf("Highscores: xxx");
+    printCp850At(BACK_BUTTON_X, BACK_BUTTON_Y, getBack());
+}
+
 // Menu Item Helpers
 static MenuItem getMainMenuItem(void) {
     return (MenuItem){
@@ -97,6 +106,15 @@ static MenuItem getGamemodeBackMenuItem(void) {
         .y = GAMEMODE_MENU_BACK_Y,
         .cursor = getArrowDown(),
         .blankCursor = getBlankArrow()
+    };
+}
+
+static MenuItem getHighscoresBackMenuItem(void) {
+    return (MenuItem){
+        .x = GAMEMODE_MENU_BACK_X,
+        .y = GAMEMODE_MENU_BACK_Y,
+        .cursor = getBlankSelector(),
+        .blankCursor = getBlankSelector()
     };
 }
 
@@ -235,6 +253,10 @@ static void processMenuInput(BlinkController *b, uint8_t joyState,
             handleGamemodeMenuInput(b, joyState, currentItem->cursor,
                                    currentItem->blankCursor, currentMenu);
             break;
+        case MENU_HIGHSCORES:
+            handleGamemodeMenuInput(b, joyState, currentItem->cursor,
+                                    currentItem->blankCursor, currentMenu);
+            break;
     }
 }
 
@@ -249,6 +271,8 @@ static MenuItem getCurrentMenuItem(MenuState currentMenu) {
             return getGamemodeRightMenuItem();
         case MENU_GAMEMODE_BACK:
             return getGamemodeBackMenuItem();
+        case MENU_HIGHSCORES:
+            return getHighscoresBackMenuItem();
         default:
             return getMainMenuItem();
     }

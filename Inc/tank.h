@@ -9,5 +9,5 @@
 #define TANK_RADIUS 4   // square hitbox
 
 void drawTank(object_t tank, const char *sprite);
-void eraseTank(Point pos);
+void eraseTankSelective(Point oldPos, object_t newTank, const char *newSprite);
 const char *selectTankSprite(object_t tank);

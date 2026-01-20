@@ -61,16 +61,15 @@ void controlTank(World *world, object_t *tank)
     int32_t nextX = tank->position_x + dx;
     int32_t nextY = tank->position_y + dy;
 
-    Point oldPos = {
-        .x = tank->position_x >> FP_SCALE,
-        .y = tank->position_y >> FP_SCALE
-    };
+    // Point for erasing old tank
+    Point oldPos = { tank->position_x >> FP_SCALE, tank->position_y >> FP_SCALE };
 
-    Point nextPos = {
-        .x = nextX >> FP_SCALE,
-        .y = nextY >> FP_SCALE
-    };
+    // Convert next position to integer for collision check
+    object_t nextPos = *tank;
+    nextPos.position_x = nextX >> FP_SCALE;
+    nextPos.position_y = nextY >> FP_SCALE;
 
+    // Try full movement
     if (checkWallCollisionAABB(nextPos, world) == COLLISION_NONE) {
         tank->position_x = nextX;
         tank->position_y = nextY;

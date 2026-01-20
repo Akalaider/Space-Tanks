@@ -2,14 +2,14 @@
 #include "world.h"
 
 void initObjecthandler(object_t* objecthandler){
-	for(uint8_t i = 0; i < 256; i++){
+	for(uint8_t i = 0; i < OBJECTHANDLER_SIZE; i++){
 		objecthandler[i].type = empty;
 	}
 }
 
 
 void spawnObject(object_t* objecthandler, object_t object){
-	for(uint8_t i = 0; i < 256; i++){
+	for(uint8_t i = 0; i < OBJECTHANDLER_SIZE; i++){
 		if(objecthandler[i].type == empty){
 			objecthandler[i].type = object.type;
 			objecthandler[i].position_x = object.position_x;
@@ -27,7 +27,7 @@ void deleteObject(object_t* objecthandler, uint8_t id){
 }
 
 void updateObject(object_t* objecthandler, World* world){
-	for(uint8_t i = 0; i < 256; i++){
+	for(uint8_t i = 0; i < OBJECTHANDLER_SIZE; i++){
 		switch (objecthandler[i].type){
 			case empty:
 				break;
@@ -35,7 +35,7 @@ void updateObject(object_t* objecthandler, World* world){
 				//add bullet1 update
 				break;
 			case player:
-				controlTank(world,objecthandler[i]);
+				controlTank(&world, &objecthandler[i]);
 				break;
 			case enemy:
 				//add enemy update

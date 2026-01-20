@@ -20,7 +20,8 @@ void level1(void) {
     
     drawWalls(outerWall, 4, 1, &world);
 
-    object_t objecthandler[64];
+    object_t objecthandler[OBJECTHANDLER_SIZE];
+    initObjecthandler(&objecthandler);
 
     initTank(&objecthandler[0]);
     push_health(&objecthandler[0]);

@@ -4,9 +4,29 @@
 static BlinkController *blinkPtr = NULL;
 static uint8_t lcdFlag = 0;
 
+// Timer for limiting tank updates (control tank)
+static volatile uint8_t tankUpdateFlag = 0; 
+static volatile uint16_t tankCounterMS = 0; 
+static volatile uint16_t tankIntervalMS = 20; // ≈ 50 Hz
+
+void setTankUpdateInterval(uint16_t intervalMS) {
+    tankIntervalMS = intervalMS;
+}
+
+uint8_t tankUpdateDue(void) {
+    if (tankUpdateFlag) {
+        tankUpdateFlag = 0;
+        return 1;
+    }
+    return 0;
+}
 
 void timer_attachBlink(BlinkController *b) {
     blinkPtr = b;
+}
+
+void timer_detachBlink(BlinkController *b) {
+    blinkPtr = NULL;
 }
 
 void initTimer(int16_t interruptMS, int8_t priority){
@@ -14,7 +34,7 @@ void initTimer(int16_t interruptMS, int8_t priority){
 
 	TIM15->CR1 &= ~(0x0B8F); // Configure timer 15 and disable counter
 	TIM15->PSC = 0; // Set prescale value
-	TIM15->ARR = interruptMS*64/(1+TIM15->PSC) - 1; // Set reload value
+	TIM15->ARR = interruptMS*64000/(1+TIM15->PSC) - 1; // Set reload value
 	TIM15->CR1 |= 0x0001; // Enable counter
 
 	TIM15->DIER |= 0x0001; // Enable timer 15 interrupts
@@ -30,21 +50,31 @@ void everyInterrupt(){
 void TIM1_BRK_TIM15_IRQHandler() {
 	if (sw.millisecond < 999){
 		sw.millisecond++;
-	} else {
+	} 
+	else {
 		sw.millisecond = 0;
 		if (sw.second < 59){
 				sw.second++;
-		} else {
+		} 
+		else {
 			sw.second = 0;
 			if (sw.minute < 59){
 				sw.minute++;
-			} else {
+			} 
+			else {
 				sw.minute = 0;
 				sw.hour++;
 			}
 		}
 	}
+	// Tank timing
+	tankCounterMS++;
+	if (tankCounterMS >= tankIntervalMS) {
+		tankCounterMS = 0;
+		tankUpdateFlag = 1;
+	}
 
+	// Blink timing
 	if (blinkPtr) { 
 		blinkPtr->counter++; 
 		if (blinkPtr->counter >= blinkPtr->intervalMS) { 
@@ -80,4 +110,3 @@ void resetTimer(){
 void stTimer(){
 	TIM15->CR1 ^= 0x0001;
 }
-

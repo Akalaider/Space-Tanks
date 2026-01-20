@@ -11,11 +11,10 @@ typedef struct {
 	int32_t position_x, position_y, a, b, c;
 } object_t;
 
-typedef struct World World;
 void initObjecthandler(object_t* objecthandler);
 void spawnObject(object_t* objecthandler, object_t object);
 void deleteObject(object_t* objecthandler, uint8_t id);
-void updateObject(object_t* objecthandler, World* world);
+void updateObject(object_t* objecthandler);
 
 
 

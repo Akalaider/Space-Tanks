@@ -15,8 +15,25 @@
 
 int main(void)
 {
-    uart_init(384000);
+    uart_init(1000000);
     clearCursor();
 
+    // Initialize hardware
+    initTimer(1, 0);
+    setupClock(); // For joystick
+    setupJoystick();
+    setupLED();
+    lcd_init();
+
+    // Clear the LDC
+    uint8_t lcd_buffer[512] = {0};
+    char screen[] = "";
+    lcd_write_string(lcd_buffer, screen, 0); 
+    lcd_write_string(lcd_buffer, screen, 1); 
+    lcd_write_string(lcd_buffer, screen, 2); 
+    lcd_write_string(lcd_buffer, screen, 3); 
+    lcd_update(lcd_buffer);
+
+    // Start menu
     drawTitleScreen();
 }

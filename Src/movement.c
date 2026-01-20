@@ -1,25 +1,36 @@
 #include "movement.h"
 
-void initTank(object_t tank) {
-    tank.type = player;
-    tank.position_x = 10 << FP_SCALE;
-    tank.position_y = 61 << FP_SCALE;
-    tank.a = TANK_WIDTH;
-    tank.b = TANK_HEIGHT;
-    tank.c &= 0x3; // set everything to 0 except 2 LSB
-    tank.c |= (3 << 2); // set health
-    tank.c |= (0 << 4);; // set sprite bit 5 - 7    
-    // clean up
-    object_t direction = {0};
-    direction.position_x = 0;
-    direction.position_y = -1;
-    sprite = selectTankSprite(getPlayerSprite());
-    drawTank(tank);
-    //clean up end
+// Fixed‑point scale factor (128 = 7 bits)
+#define FP_SCALE 7
+
+// Tunable speeds 
+
+#define SPEED_X 400 // horizontal speed
+#define SPEED_Y 240 // vertical speed (rows are taller)
+
+
+#define DIAG_SCALE 91 // ≈ 1/sqrt(2) * 128
+
+void initTank(object_t *tank)
+{
+    tank->type = player;
+    tank->position_x = 10 << FP_SCALE;
+    tank->position_y = 61 << FP_SCALE;
+    tank->a = TANK_WIDTH;
+    tank->b = TANK_HEIGHT;
+
+    tank->c = 0;                 // clear all bits
+    tank->c |= HAT_CONTROL;      // control mode = hat
+    tank->c |= (3 << 2);         // health = 3
+    tank->c |= (0 << 4);         // sprite index = 0
+
+    const char *sprite = selectTankSprite(getTankSpriteIndex(tank));
+    drawTank(*tank, sprite);
 }
 
-uint8_t readController(object_t tank){
-	switch (tank.c & ((int32_t) 0x3)){
+
+uint8_t readController(const object_t *tank){
+    switch (tank->c & 0x03) {
 		case JOYSTICK_CONTROL:
 			//add joystickcontroller return
 			return;
@@ -33,95 +44,61 @@ uint8_t readController(object_t tank){
 	}
 }
 
-void controlTank(World *world, object_t tank) {
-    uint8_t joyState = readController(tank);
+void controlTank(World *world, object_t *tank)
+{
+    uint8_t joy = readController(tank);
 
-    int16_t dx = 0;
-    int16_t dy = 0;
+    int16_t dx = 0, dy = 0;
 
-    // Build velocity in fixed‑point units
-    if (joyState & JOY_UP)    dy = -SPEED_Y;
-    if (joyState & JOY_DOWN)  dy =  SPEED_Y;
-    if (joyState & JOY_LEFT)  dx = -SPEED_X;
-    if (joyState & JOY_RIGHT) dx =  SPEED_X;
+    if (joy & JOY_UP)    dy = -SPEED_Y;
+    if (joy & JOY_DOWN)  dy =  SPEED_Y;
+    if (joy & JOY_LEFT)  dx = -SPEED_X;
+    if (joy & JOY_RIGHT) dx =  SPEED_X;
 
-    if (joyState & JOY_CENTER)
-        return;
-
-    // LED feedback
-    setLED(joyState);
-
-    // Normalize diagonal movement
-    if (dx && dy) {
-        dx = (dx * DIAG_SCALE) >> FP_SCALE;
-        dy = (dy * DIAG_SCALE) >> FP_SCALE;
-    }
-    
-    // If no movement
     if (dx == 0 && dy == 0)
         return;
 
-    // Compute next fixed‑point position
-    int32_t nextX = tank.position_x + dx;
-    int32_t nextY = tank.position_y + dy;
+    int32_t nextX = tank->position_x + dx;
+    int32_t nextY = tank->position_y + dy;
 
-    // Point for erasing old tank
-    Point oldPos = { tank.position_x >> FP_SCALE, tank.position_y >> FP_SCALE };
+    Point oldPos = {
+        .x = tank->position_x >> FP_SCALE,
+        .y = tank->position_y >> FP_SCALE
+    };
 
-    // Convert next position to integer for collision check
-    object_t nextPos = tank;
-    nextPos.position_x = nextX >> FP_SCALE;
-    nextPos.position_y = nextY >> FP_SCALE;
+    Point nextPos = {
+        .x = nextX >> FP_SCALE,
+        .y = nextY >> FP_SCALE
+    };
 
-    // Try full movement
     if (checkWallCollisionAABB(nextPos, world) == COLLISION_NONE) {
-        tank.position_x = nextX;
-        tank.position_y = nextY;
-    } else {
-        // Try X-only movement
-        object_t tryX = tank;
-        tryX.position_x = (tank.position_x + dx) >> FP_SCALE;
-        tryX.position_y = tank.position_y >> FP_SCALE;
-        if (checkWallCollisionAABB(tryX, world) == COLLISION_NONE) {
-            tank.position_x += dx;
-        }
-
-        // Try Y-only movement
-        object_t tryY = tank;
-        tryY.position_x = tank.position_x >> FP_SCALE;
-        tryY.position_y = (tank.position_y + dy) >> FP_SCALE;
-        if (checkWallCollisionAABB(tryY, world) == COLLISION_NONE) {
-            tank.position_y += dy;
-        }
+        tank->position_x = nextX;
+        tank->position_y = nextY;
     }
 
-    // Store velocity and select sprite
-    tank.a = dx;
-    tank.b = dy;
-    
-    object_t direction = {0};
-    direction.position_x = dx;
-    direction.position_y = dy;
-    sprite = selectTankSprite(getPlayerSprite());
+    // update sprite bits
+    uint8_t spriteIndex = 0;
 
-    // Draw new tank
-    drawTank(tank);
-    eraseTankSelective(oldPos, tank, sprite);  // erase leftovers
+    if (dx == 0 && dy < 0) spriteIndex = 0;
+    else if (dx > 0 && dy < 0) spriteIndex = 1;
+    else if (dx > 0 && dy == 0) spriteIndex = 2;
+    else if (dx > 0 && dy > 0) spriteIndex = 3;
+    else if (dx == 0 && dy > 0) spriteIndex = 4;
+    else if (dx < 0 && dy > 0) spriteIndex = 5;
+    else if (dx < 0 && dy == 0) spriteIndex = 6;
+    else if (dx < 0 && dy < 0) spriteIndex = 7;
 
+    tank->c &= ~(0x07 << 4);
+    tank->c |= (spriteIndex << 4);
+
+    const char *sprite = selectTankSprite(spriteIndex);
+
+    drawTank(*tank, sprite);
+    eraseTankSelective(oldPos, *tank, sprite);
 }
 
-int16_t getPlayerX(void) {
-    return tank.position_x >> FP_SCALE;
-}
 
-int16_t getPlayerY(void) {
-    return tank.position_y >> FP_SCALE;
-}
-
-int16_t getPlayerHealth(void) {
-    return (tank.c >> 2) & 0x03;
-}
-
-int16_t getPlayerSprite(void) {
-    return (tank.c >> 4);
-}
+int16_t getTankX(const object_t *tank) { return tank->position_x >> FP_SCALE; }
+int16_t getTankY(const object_t *tank) { return tank->position_y >> FP_SCALE; }
+int16_t getTankHealth(const object_t *tank) { return (tank->c >> 2) & 0x03; }
+uint8_t getTankSpriteIndex(const object_t *tank) { return (tank->c >> 4) & 0x07; }

@@ -28,19 +28,17 @@ static uint8_t spriteCovers(const char *sprite, int16_t sx, int16_t sy,
     return 0;
 }
 
-void drawTank(object_t tank)
+void drawTank(object_t tank, const char *sprite)
 {
-    // Convert from fixed-point to integer coordinates
     int16_t x = tank.position_x >> FP_SCALE;
     int16_t y = tank.position_y >> FP_SCALE;
 
     uint8_t row = 0;
     uint8_t col = 0;
+
     fgcolor(10);
 
-    char *sprite = selectTankSprite(tank);
-
-    for (uint8_t i = 0; sprite[i] != '\0'; i++) {
+    for (uint16_t i = 0; sprite[i] != '\0'; i++) {
 
         if (sprite[i] == '\n') {
             row++;
@@ -48,12 +46,16 @@ void drawTank(object_t tank)
             continue;
         }
 
-        gotoxy(x + col - (TANK_WIDTH >> 1), y + row - (TANK_HEIGHT >> 1));
+        gotoxy(x + col - (TANK_WIDTH >> 1),
+               y + row - (TANK_HEIGHT >> 1));
+
         printf("%c", sprite[i]);
         col++;
     }
+
     fgcolor(15);
 }
+
 
 
 void eraseTankSelective(Point oldPos, object_t newTank, const char *newSprite)
@@ -80,6 +82,8 @@ void eraseTankSelective(Point oldPos, object_t newTank, const char *newSprite)
 // Select sprite based on 3-bit sprite index stored in tank.c bits 5–7
 const char *selectTankSprite(uint8_t spriteIndex)
 {
+    spriteIndex &= 0x07;
+
     switch (spriteIndex) {
         case 0: return getTankUp();
         case 1: return getTankUpRight();

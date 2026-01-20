@@ -1,10 +1,3 @@
-/*
- * io.h
- *
- *  Created on: 8. jan. 2026
- *      Author: adambenali
- */
-
 #ifndef IO_H_
 #define IO_H_
 #include <stdint.h>
@@ -19,6 +12,10 @@ void setupClock();
 #define JOY_LEFT (1 << 2) 
 #define JOY_RIGHT (1 << 3) 
 #define JOY_CENTER (1 << 4)
+
+#define JOYSTICK_CONTROL 0 
+#define KEYBOARD_CONTROL 1 
+#define HAT_CONTROL 2
 
 void setupUp();
 void setupDown();

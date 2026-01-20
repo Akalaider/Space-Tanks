@@ -4,16 +4,10 @@
 #include "ansi.h"
 #include "movement.h"
 #include "io.h"
-#include "aimovement.h"
 
-
-ai_t enemy1;
 void level1(void) {
-    //push_health();
     clrscr();
     
-	object_t objecthandler[256];
-	clrscr();
     // Draw game arena
     Point outerWall[] = {
         {0, 0},
@@ -25,33 +19,20 @@ void level1(void) {
     World world = {0};
     
     drawWalls(outerWall, 4, 1, &world);
-    drawObstacle((Point){150, 45}, getAsteroid(), 21, 7, &world);
+    fgcolor(1);
+    drawObstacle((Point){30, 40}, getArrowRight(), 10, 8, &world);
+    fgcolor(15);
 
-    initTank();
-        //initAITank();
+    object_t player;
 
-    drawObstacle((Point){40, 15}, getOumuamua(), 8, 9, &world);
-
-
-    drawObstacle((Point){100, 35}, getAsteroid2(), 14, 9, &world);
-
-
-    drawObstacle((Point){155, 20}, getAsteroid3(), 20, 4, &world);
-
-
-    drawObstacle((Point){45, 45}, getAsteroid4(), 20, 9, &world);
-
-
-    drawObstacle((Point){90, 7}, getAsteroid5(), 15, 8, &world);
-
-    initAITank(&enemy1);
-
-    initTank(objecthandler[0]);
-	setTankUpdateInterval(50);
+    initTank(&player);
+    push_health(&player);
+    
+    setTankUpdateInterval(50); // 10 ms → 100 Hz
     // Game loop
     while (1) {
-    	if (tankUpdateDue()){
-    		updateObject(&objecthandler, &world);
-    	}
+        if (tankUpdateDue()) {
+            controlTank(&world, &player);
+        }
     }
 }

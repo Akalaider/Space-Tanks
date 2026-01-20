@@ -486,11 +486,29 @@ void drawTitleScreen(void) {
         }
         
         // Process input
+        // Detect only transitions from 0 → 1
         uint8_t newPress = joyState & ~lastJoyState;
-        if (newPress) {
-            processMenuInput(&selectorBlink, newPress, &currentItem, &currentMenu);
+
+        if (newPress & JOY_CENTER) {
+            processMenuInput(&selectorBlink, JOY_CENTER, &currentItem, &currentMenu);
         }
-        
+
+        if (newPress & JOY_UP) {
+            processMenuInput(&selectorBlink, JOY_UP, &currentItem, &currentMenu);
+        }
+
+        if (newPress & JOY_DOWN) {
+            processMenuInput(&selectorBlink, JOY_DOWN, &currentItem, &currentMenu);
+        }
+
+        if (newPress & JOY_LEFT) {
+            processMenuInput(&selectorBlink, JOY_LEFT, &currentItem, &currentMenu);
+        }
+
+        if (newPress & JOY_RIGHT) {
+            processMenuInput(&selectorBlink, JOY_RIGHT, &currentItem, &currentMenu);
+        }
+
         lastJoyState = joyState;
     }
 }

@@ -10,4 +10,8 @@
 
 void drawTank(object_t tank, const char *sprite);
 void eraseTankSelective(Point oldPos, object_t newTank, const char *newSprite);
+<<<<<<< HEAD
 const char *selectTankSprite(object_t tank);
+=======
+const char *selectTankSprite(object_t tank);
+>>>>>>> c7778283e15d4e0370bff9bb7da1a58e218cc7a6

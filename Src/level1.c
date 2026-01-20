@@ -19,20 +19,17 @@ void level1(void) {
     World world = {0};
     
     drawWalls(outerWall, 4, 1, &world);
-    fgcolor(1);
-    drawObstacle((Point){30, 40}, getArrowRight(), 10, 8, &world);
-    fgcolor(15);
 
-    object_t player;
+    object_t objecthandler[64];
 
-    initTank(&player);
-    push_health(&player);
+    initTank(&objecthandler[0]);
+    push_health(&objecthandler[0]);
     
     setTankUpdateInterval(50); // 10 ms → 100 Hz
     // Game loop
     while (1) {
         if (tankUpdateDue()) {
-            controlTank(&world, &player);
+            updateObject(&objecthandler, &world);
         }
     }
 }

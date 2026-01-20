@@ -6,12 +6,14 @@ void initTank(object_t tank) {
     tank.position_y = 61 << FP_SCALE;
     tank.a = TANK_WIDTH;
     tank.b = TANK_HEIGHT;
-    tank.c = (0 << 0) + (0 << 2); //bit 0-1: controller type --- bit 2->: health
-    
+    tank.c &= 0x3; // set everything to 0 except 2 LSB
+    tank.c |= (3 << 2); // set health
+    tank.c |= (0 << 4);; // set sprite bit 5 - 7    
     // clean up
     object_t direction = {0};
     direction.position_x = 0;
     direction.position_y = -1;
+    sprite = selectTankSprite(getPlayerSprite());
     drawTank(tank);
     //clean up end
 }
@@ -100,6 +102,8 @@ void controlTank(World *world, object_t tank) {
     object_t direction = {0};
     direction.position_x = dx;
     direction.position_y = dy;
+    sprite = selectTankSprite(getPlayerSprite());
+
     // Draw new tank
     drawTank(tank);
     eraseTankSelective(oldPos, tank, sprite);  // erase leftovers
@@ -112,4 +116,12 @@ int16_t getPlayerX(void) {
 
 int16_t getPlayerY(void) {
     return tank.position_y >> FP_SCALE;
+}
+
+int16_t getPlayerHealth(void) {
+    return (tank.c >> 2) & 0x03;
+}
+
+int16_t getPlayerSprite(void) {
+    return (tank.c >> 4);
 }

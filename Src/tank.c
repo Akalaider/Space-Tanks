@@ -77,46 +77,18 @@ void eraseTankSelective(Point oldPos, object_t newTank, const char *newSprite)
     }
 }
 
-
-// Choose sprite based on direction (stored in position_x and position_y of the object)
-char *selectTankSprite(object_t direction)
+// Select sprite based on 3-bit sprite index stored in tank.c bits 5–7
+const char *selectTankSprite(uint8_t spriteIndex)
 {
-    if (direction.position_x == 0 && direction.position_y == 0) return getTankUp();
-    
-    int16_t absX = direction.position_x < 0 ? -direction.position_x : direction.position_x;
-    int16_t absY = direction.position_y < 0 ? -direction.position_y : direction.position_y;
-    
-    // Determine primary direction based on which component is larger    
-    // If absX is larger it's horizontal
-    // If absY is larger it's vertical  
-    // Otherwise it's diagonal
-    
-    // absX > 2*absY means very horizontal (within ±22.5° of horizontal)
-    // absY > 2*absX means very vertical (within ±22.5° of vertical)
-    
-    if (direction.position_y < 0) {  // Upper half
-        if (direction.position_x > 0) {  // Upper right quadrant
-            if (absX > absY * 2) return getTankRight();
-            if (absY > absX * 2) return getTankUp();
-            return getTankUpRight();
-        } else if (direction.position_x < 0) {  // Upper left quadrant
-            if (absX > absY * 2) return getTankLeft();
-            if (absY > absX * 2) return getTankUp();
-            return getTankUpLeft();
-        } else {
-            return getTankUp();
-        }
-    } else {  // Lower half
-        if (direction.position_x > 0) {  // Lower right quadrant
-            if (absX > absY * 2) return getTankRight();
-            if (absY > absX * 2) return getTankDown();
-            return getTankDownRight();
-        } else if (direction.position_x < 0) {  // Lower left quadrant
-            if (absX > absY * 2) return getTankLeft();
-            if (absY > absX * 2) return getTankDown();
-            return getTankDownLeft();
-        } else {
-            return getTankDown();
-        }
+    switch (spriteIndex) {
+        case 0: return getTankUp();
+        case 1: return getTankUpRight();
+        case 2: return getTankRight();
+        case 3: return getTankDownRight();
+        case 4: return getTankDown();
+        case 5: return getTankDownLeft();
+        case 6: return getTankLeft();
+        case 7: return getTankUpLeft();
+        default: return getTankUp();
     }
 }

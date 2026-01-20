@@ -1,44 +1,43 @@
-/*
- * lcd.c
- *
- *  Created on: 9. jan. 2026
- *      Author: adambenali
- */
-
 #include "lcd.h"
 #include "charset.h"
 #include "timer.h"
 
-void lcd_write_string(uint8_t *buffer,char *str, uint8_t line){
-	uint16_t index = 0;
-	uint16_t offset;
+void lcd_write_string(uint8_t *buffer, char *str, uint8_t line){
+    uint16_t index = 0;
+    uint16_t offset;
 
-	switch (line) {
-	    case 1:
-	        offset = 1 * 128;
-	        break;
+    switch (line) {
+        case 1: offset = 1 * 128; break;
+        case 2: offset = 2 * 128; break;
+        case 3: offset = 3 * 128; break;
+        default: offset = 0; break;
+    }
 
-	    case 2:
-	        offset = 2 * 128;
-	        break;
+    uint16_t pos = 0;   // index*6
 
-	    case 3:
-	        offset = 3 * 128;
-	        break;
+    while (str[index] != '\0' && (pos + offset) < 505){
 
-	    default:
-	        offset = 0;
-	        break;
-	}
+        char c = str[index];
 
-	while (str[index] != '\0' && (index*5 + offset) < 505){
-		for (uint16_t j = 0; j < 5; j++){
-			buffer[index*6 + j + offset] = character_data[str[index] - 0x20][j];
-		}
-		buffer[index*6 + 5 + offset] = 0;
-		index++;
-	}
+        // characters without spacing
+        uint8_t tight = (c == '{' || c == '}' || c == '|' || c == '~');
+
+        for (uint8_t j = 0; j < 5; j++){
+            buffer[offset + pos + j] = character_data[c - 0x20][j];
+        }
+
+        // add spacing only for normal characters
+        if (!tight) {
+            buffer[offset + pos + 5] = 0;
+            pos += 6;
+        } else {
+            pos += 5;
+        }
+
+        index++;
+    }
 }
+
 
 void lcd_update(uint8_t *lcd){
 	uint8_t tmp = getlcdFlag();

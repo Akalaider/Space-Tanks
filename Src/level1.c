@@ -12,6 +12,8 @@ void level1(void) {
     //push_health();
     clrscr();
     
+	object_t objecthandler[256];
+	clrscr();
     // Draw game arena
     Point outerWall[] = {
         {0, 0},
@@ -44,16 +46,12 @@ void level1(void) {
 
     initAITank(&enemy1);
 
-        
-    initTank();
-
-    setTankUpdateInterval(50); // 10 ms → 100 Hz
+    initTank(objecthandler[0]);
+	setTankUpdateInterval(50);
     // Game loop
     while (1) {
-        if (tankUpdateDue()) {
-            controlTank(&world);
-            controlAITank(&enemy1, &world);
-
-        }
+    	if (tankUpdateDue()){
+    		updateObject(&objecthandler, &world);
+    	}
     }
 }

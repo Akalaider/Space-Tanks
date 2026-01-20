@@ -1,37 +1,38 @@
 #include "movement.h"
 
-// Fixed‑point scale factor (128 = 7 bits)
-#define FP_SCALE 7
-
-// Tunable speeds 
-
-#define SPEED_X 400 // horizontal speed
-#define SPEED_Y 240 // vertical speed (rows are taller)
-
-
-#define DIAG_SCALE 91 // ≈ 1/sqrt(2) * 128
-
-// Tank object
-static object_t tank;
-
-static const char *sprite = NULL;
-
-void initTank(void) {
+void initTank(object_t tank) {
     tank.type = player;
     tank.position_x = 10 << FP_SCALE;
     tank.position_y = 61 << FP_SCALE;
-    tank.a = 0;  // velocity dx
-    tank.b = 0;  // velocity dy
+    tank.a = TANK_WIDTH;
+    tank.b = TANK_HEIGHT;
+    tank.c = (0 << 0) + (0 << 2); //bit 0-1: controller type --- bit 2->: health
     
+    // clean up
     object_t direction = {0};
     direction.position_x = 0;
     direction.position_y = -1;
-    sprite = selectTankSprite(direction);
-    drawTank(tank, sprite);
+    drawTank(tank);
+    //clean up end
 }
 
-void controlTank(World *world) {
-    uint8_t joyState = readJoystick();
+uint8_t readController(object_t tank){
+	switch (tank.c & ((int32_t) 0x3)){
+		case JOYSTICK_CONTROL:
+			//add joystickcontroller return
+			return;
+		case KEYBOARD_CONTROL:
+			//add joystickcontroller return
+			return;
+		case HAT_CONTROL:
+			return readJoystick();
+		default:
+			return readJoystick();
+	}
+}
+
+void controlTank(World *world, object_t tank) {
+    uint8_t joyState = readController(tank);
 
     int16_t dx = 0;
     int16_t dy = 0;
@@ -66,7 +67,9 @@ void controlTank(World *world) {
     Point oldPos = { tank.position_x >> FP_SCALE, tank.position_y >> FP_SCALE };
 
     // Convert next position to integer for collision check
-    Point nextPos = { nextX >> FP_SCALE, nextY >> FP_SCALE };
+    object_t nextPos = tank;
+    nextPos.position_x = nextX >> FP_SCALE;
+    nextPos.position_y = nextY >> FP_SCALE;
 
     // Try full movement
     if (checkWallCollisionAABB(nextPos, world) == COLLISION_NONE) {
@@ -74,13 +77,17 @@ void controlTank(World *world) {
         tank.position_y = nextY;
     } else {
         // Try X-only movement
-        Point tryX = { (tank.position_x + dx) >> FP_SCALE, tank.position_y >> FP_SCALE };
+        object_t tryX = tank;
+        tryX.position_x = (tank.position_x + dx) >> FP_SCALE;
+        tryX.position_y = tank.position_y >> FP_SCALE;
         if (checkWallCollisionAABB(tryX, world) == COLLISION_NONE) {
             tank.position_x += dx;
         }
 
         // Try Y-only movement
-        Point tryY = { tank.position_x >> FP_SCALE, (tank.position_y + dy) >> FP_SCALE };
+        object_t tryY = tank;
+        tryY.position_x = tank.position_x >> FP_SCALE;
+        tryY.position_y = (tank.position_y + dy) >> FP_SCALE;
         if (checkWallCollisionAABB(tryY, world) == COLLISION_NONE) {
             tank.position_y += dy;
         }
@@ -93,11 +100,8 @@ void controlTank(World *world) {
     object_t direction = {0};
     direction.position_x = dx;
     direction.position_y = dy;
-    sprite = selectTankSprite(direction);
-
     // Draw new tank
-    drawTank(tank, sprite);
-
+    drawTank(tank);
     eraseTankSelective(oldPos, tank, sprite);  // erase leftovers
 
 }

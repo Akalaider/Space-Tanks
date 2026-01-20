@@ -96,6 +96,8 @@ void controlAITank(ai_t *ai, World *world) {
 
     // --- MODE: DIRECT ----------------------------------------------------
     if (ai->mode == AI_DIRECT) {
+
+        // 1) Prøv fuld bevægelse
         int32_t nextX = ai->tank.position_x + dx;
         int32_t nextY = ai->tank.position_y + dy;
         Point nextPos = { nextX >> FP_SCALE, nextY >> FP_SCALE };
@@ -105,7 +107,26 @@ void controlAITank(ai_t *ai, World *world) {
             return;
         }
 
-        // Start wall hugging
+        // 2) Hvis diagonal → prøv akser separat (hurtig slide)
+        if (dx && dy) {
+            // Kun X
+            int32_t altX = ai->tank.position_x + dx;
+            Point posX = { altX >> FP_SCALE, ai->tank.position_y >> FP_SCALE };
+            if (checkWallCollisionAABB(posX, world) == COLLISION_NONE) {
+                moveAI(ai, world, dx, 0);
+                return;
+            }
+
+            // Kun Y
+            int32_t altY = ai->tank.position_y + dy;
+            Point posY = { ai->tank.position_x >> FP_SCALE, altY >> FP_SCALE };
+            if (checkWallCollisionAABB(posY, world) == COLLISION_NONE) {
+                moveAI(ai, world, 0, dy);
+                return;
+            }
+        }
+
+        // 3) Hvis både diagonal og akser er blokeret → start wall‑hugging
         if (dx != 0) {
             ai->hugDx = 0;
             ai->hugDy = (playerY > aiY) ? AI_SPEED_Y : -AI_SPEED_Y;
@@ -119,12 +140,13 @@ void controlAITank(ai_t *ai, World *world) {
 
     // --- MODE: HUG -------------------------------------------------------
     if (ai->mode == AI_HUG) {
+
         int32_t oldX = ai->tank.position_x;
         int32_t oldY = ai->tank.position_y;
 
         moveAI(ai, world, ai->hugDx, ai->hugDy);
 
-        // Hvis vi ikke flyttede os, vend hug-retning
+        // Hvis vi sidder fast → vend om
         if (ai->tank.position_x == oldX && ai->tank.position_y == oldY) {
             ai->hugDx = -ai->hugDx;
             ai->hugDy = -ai->hugDy;

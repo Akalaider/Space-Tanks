@@ -4,13 +4,11 @@
 #define FP_SCALE 7
 
 // Tunable speeds 
-<<<<<<< HEAD
+
 #define SPEED_X 400 // horizontal speed
 #define SPEED_Y 240 // vertical speed (rows are taller)
-=======
-#define SPEED_X 200 // horizontal speed 
-#define SPEED_Y 120 // vertical speed (rows are taller) 
->>>>>>> c7778283e15d4e0370bff9bb7da1a58e218cc7a6
+
+
 #define DIAG_SCALE 91 // ≈ 1/sqrt(2) * 128
 
 // Tank object
@@ -99,17 +97,15 @@ void controlTank(World *world) {
 
     // Draw new tank
     drawTank(tank, sprite);
-<<<<<<< HEAD
 
     eraseTankSelective(oldPos, tank, sprite);  // erase leftovers
 
 }
+
 int16_t getPlayerX(void) {
     return tank.position_x >> FP_SCALE;
 }
-=======
->>>>>>> c7778283e15d4e0370bff9bb7da1a58e218cc7a6
 
-    eraseTankSelective(oldPos, tank, sprite);  // erase leftovers
-    
+int16_t getPlayerY(void) {
+    return tank.position_y >> FP_SCALE;
 }

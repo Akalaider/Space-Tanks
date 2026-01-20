@@ -447,13 +447,7 @@ static MenuItem getCurrentMenuItem(MenuState currentMenu) {
     }
 }
 
-void drawTitleScreen(void) {
-    // Initialize hardware
-    initTimer(1, 0);
-    setupClock(); // For joystick
-    setupJoystick();
-    setupLED();
-    
+void drawTitleScreen(void) {  
     // Initialize menu state
     MenuState currentMenu = MENU_MAIN;
     MenuItem currentItem = getMainMenuItem();

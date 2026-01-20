@@ -329,6 +329,35 @@ static const char star4[] =
 "         \n"
 "    █    \n";
 
+static const char controller[] =
+"████████████████████████████████████████████████████████████████████████████████████████████████████\n"
+"██                                                                                                ██\n"
+"██                                                                                                ██\n"
+"██   ███████████████████████████████████  Move player / Shooting angle                            ██\n"
+"██   ██                               ██               |                                          ██\n"
+"██   ██           █████████           ██ <-------------                           ███████         ██\n"
+"██   ██       ████         ████       ██                                       ███       ███      ██\n"
+"██   ██    ███                 ███    ██            Fire missiles            ██             ██    ██\n"
+"██   ██  ██                       ██  ██                   |                ██               ██   ██\n"
+"██   ██ ██                         ██ ██                    --------------> ██               ██   ██\n"
+"██   ████                           ████                                    ██               ██   ██\n"
+"██   ███                             ███  Fire homing missiles               ██             ██    ██\n"
+"██   ██                               ██           |                           ███       ███      ██\n"
+"██   ██                               ██           |             ███████          ███████         ██\n"
+"██   ██                               ██           |          ███       ███                       ██\n"
+"██   ██                               ██           |        ██             ██                     ██\n"
+"██   ███                             ███            -----> ██               ██                    ██\n"
+"██   ████                           ████                   ██               ██                    ██\n"
+"██   ██ ██                         ██ ██                   ██               ██                    ██\n"
+"██   ██  ██                       ██  ██                    ██             ██                     ██\n"
+"██   ██    ███                 ███    ██                      ███       ███                       ██\n"
+"██   ██       ████         ████       ██                         ███████                          ██\n"
+"██   ██           █████████           ██                                                          ██\n"
+"██   ██                               ██                                                          ██\n"
+"██   ███████████████████████████████████                                                          ██\n"
+"██                                                                                                ██\n"
+"████████████████████████████████████████████████████████████████████████████████████████████████████\n";
+
 const char *getTankUp(void)        { return tankUp; }
 const char *getTankDown(void)      { return tankDown; }
 const char *getTankLeft(void)      { return tankLeft; }
@@ -365,3 +394,5 @@ const char *getStar1(void) { return star1; }
 const char *getStar2(void) { return star2; }
 const char *getStar3(void) { return star3; }
 const char *getStar4(void) { return star4; }
+
+const char *getController(void)    { return controller; }

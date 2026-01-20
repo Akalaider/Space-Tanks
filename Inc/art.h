@@ -48,4 +48,6 @@ const char *getStar1(void);
 const char *getStar2(void);
 const char *getStar3(void);
 const char *getStar4(void);
+
+const char *getController(void);
 #endif

@@ -40,7 +40,7 @@ typedef struct {
 
 // Back button position
 #define BACK_BUTTON_X 96
-#define BACK_BUTTON_Y 45
+#define BACK_BUTTON_Y 55
 
 // Display Functions
 static void blinkSelector(const BlinkController *b, const char *cursor, const char *blankCursor) {
@@ -93,8 +93,7 @@ static void drawMultiplayerMenu(void) {
 static void drawHighscoresMenu(void) {
     clrscr();
     printCp850At(76, 5, getTitleArt());
-    gotoxy(30, 20);
-    printf("Highscores: xxx");
+    printCp850At(69, 25, getController());
     printCp850At(BACK_BUTTON_X, BACK_BUTTON_Y, getBack());
     gotoxy(30, 67);
     fgcolor(13);

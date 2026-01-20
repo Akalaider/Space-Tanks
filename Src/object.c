@@ -35,7 +35,7 @@ void updateObject(object_t* objecthandler, World* world){
 				//add bullet1 update
 				break;
 			case player:
-				controlTank(&world, &objecthandler[i]);
+				controlTank(world, &objecthandler[i]);
 				push_health(&objecthandler[i]);
 				break;
 			case enemy:

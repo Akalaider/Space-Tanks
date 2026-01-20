@@ -1,0 +1,145 @@
+#include "level3.h"
+#include "world.h"
+#include "tank.h"
+#include "ansi.h"
+#include "movement.h"
+#include "io.h"
+#include "timer.h"
+static object_t playerTank;
+
+typedef struct {
+    Point pos;
+    Point size;
+    const char *(*sprite)(void);
+} Star;
+
+// Liste af stjerner i level 1
+static Star stars[] = {
+    { { 5, 10 },  { 5, 3 }, getStar1 },
+    { { 20, 15 }, { 8, 5 }, getStar2 },
+    { { 50, 40 }, { 3, 3 }, getStar3 },
+    { { 100, 20 }, { 10, 7 }, getStar4 },
+	{ { 90, 30 }, { 5, 3 }, getStar1 },
+	{ { 200, 60 }, { 3, 3 }, getStar3 },
+	{ { 15, 55 }, { 10, 7 }, getStar4 },
+	{ { 140, 47 }, { 8, 5 }, getStar2 },
+	{ { 180, 15 },  { 5, 3 }, getStar1 },
+	{ { 170, 45 }, { 3, 3 }, getStar3 },
+	{ { 120, 62 },  { 5, 3 }, getStar1 },
+	{ { 85, 20 }, { 8, 5 }, getStar2 },
+	{ { 110, 12 },  { 5, 3 }, getStar1 },
+	{ { 160, 15 }, { 8, 5 }, getStar2 },
+
+};
+static const int starCount = sizeof(stars) / sizeof(stars[0]);
+
+//ai_t enemy1;
+void level3(void) {
+	initTank(&playerTank);
+
+    clrscr();
+
+    // Draw game arena
+    Point outerWall[] = {
+         {0, 0},
+         {240, 0},
+         {240, 72},
+         {0, 72}
+    };
+
+    World world = {0};
+
+    drawWalls(outerWall, 4, 1, &world);
+
+    Point innerWall1[] = {
+        {25, 20},
+		{25, 10},
+    	{85, 10}
+    };
+    drawWalls(innerWall1, 6, 0, &world);
+
+    Point innerWall2[] = {
+    		{105, 10},
+			{105, 40},
+    };
+    drawWalls(innerWall2, 2, 0, &world);
+
+    Point innerWall3[] = {
+    		{105,25},
+			{130,25}
+    };
+    drawWalls(innerWall3, 2, 0, &world);
+
+    Point innerWall4[] = {
+    		{25, 40},
+			{85, 40}
+    };
+
+    drawWalls(innerWall4, 2, 0, &world);
+
+    Point innerWall5[] = {
+    		{55, 40},
+			{55, 55}
+    };
+
+    drawWalls(innerWall5, 2, 0, &world);
+
+    Point innerWall6[] = {
+    		{105, 50},
+			{155, 50}
+    };
+
+    drawWalls(innerWall6, 2, 0, &world);
+
+    Point innerWall7[] = {
+    		{135, 35},
+			{135, 50}
+    };
+
+    drawWalls(innerWall7, 2, 0, &world);
+
+    Point innerWall8[] = {
+    		{155, 10},
+			{155, 35},
+			{185, 35},
+			{185, 50}
+    };
+
+    drawWalls(innerWall8, 4, 0, &world);
+
+    drawObstacle((Point){123, 60}, getAsteroid3(), 20, 4, &world);
+    drawObstacle((Point){120, 10}, getAsteroid6(), 17, 8, &world);
+    drawObstacle((Point){52, 20}, getAsteroid4(), 20, 9, &world);
+    drawObstacle((Point){30, 53}, getAsteroid2(), 14, 9, &world);
+    drawObstacle((Point){177, 14}, getAsteroid(), 21, 7, &world);
+
+
+
+    object_t player;
+
+        initTank(&player);
+        push_health(&player);
+
+        setTankUpdateInterval(50); // 10 ms → 100 Hz
+        // Game loop
+        // Game loop
+        while (1) {
+            if (tankUpdateDue()) {
+                controlTank(&world, &playerTank);
+                //controlAITank(&enemy1, &world);
+
+                Point tankPos = (Point){ getTankX(&playerTank), getTankY(&playerTank) };
+                Rect tankRect = getTankRect(tankPos);
+
+                for (int i = 0; i < starCount; i++) {
+                    Rect starRect = getObstacleRect(stars[i].pos, stars[i].size);
+
+                    if (!rectOverlap(tankRect, starRect)) {
+                        fgcolor(11);
+                        printCp850At(stars[i].pos.x, stars[i].pos.y, stars[i].sprite());
+                        fgcolor(15);
+                    }
+                }
+            }
+        }
+    }

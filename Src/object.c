@@ -1,4 +1,5 @@
 #include "object.h"
+#include "world.h"
 
 void initObjecthandler(object_t* objecthandler){
 	for(uint8_t i = 0; i < 256; i++){
@@ -12,7 +13,7 @@ void spawnObject(object_t* objecthandler, object_t object){
 		if(objecthandler[i].type == empty){
 			objecthandler[i].type = object.type;
 			objecthandler[i].position_x = object.position_x;
-			objecthandler[i].position_y = object.position_y;  // Fixed: was position_x
+			objecthandler[i].position_y = object.position_y;
 			objecthandler[i].a = object.a;
 			objecthandler[i].b = object.b;
 			objecthandler[i].c = object.c;
@@ -25,7 +26,7 @@ void deleteObject(object_t* objecthandler, uint8_t id){
 	objecthandler[id].type = empty;
 }
 
-void updateObject(object_t* objecthandler){
+void updateObject(object_t* objecthandler, World* world){
 	for(uint8_t i = 0; i < 256; i++){
 		switch (objecthandler[i].type){
 			case empty:
@@ -34,7 +35,7 @@ void updateObject(object_t* objecthandler){
 				//add bullet1 update
 				break;
 			case player:
-				//add playerKeyboard update
+				controlTank(world,objecthandler[i]);
 				break;
 			case enemy:
 				//add enemy update

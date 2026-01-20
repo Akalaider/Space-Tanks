@@ -1,16 +1,12 @@
 #include "movement.h"
-#include "world.h"
-#include "tank.h"
-#include "ansi.h"
-#include "io.h"
 
 // Fixed‑point scale factor (128 = 7 bits)
 #define FP_SCALE 7
 
 // Tunable speeds 
-#define SPEED_X 200 // horizontal speed 
-#define SPEED_Y 120 // vertical speed (rows are taller) 
-#define DIAG_SCALE 71 // ≈ 1/sqrt(2) * 100
+#define SPEED_X 400 // horizontal speed
+#define SPEED_Y 240 // vertical speed (rows are taller)
+#define DIAG_SCALE 91 // ≈ 1/sqrt(2) * 128
 
 // Tank object
 static object_t tank;
@@ -50,22 +46,21 @@ void controlTank(World *world) {
     setLED(joyState);
 
     // Normalize diagonal movement
-    if (dx != 0 && dy != 0) {
-        dx = ((dx * DIAG_SCALE) >> 7) + ((dx * DIAG_SCALE) >> 9) + ((dx * DIAG_SCALE) >> 13) + ((dx * DIAG_SCALE) >> 14) + ((dx * DIAG_SCALE) >> 15) + ((dx * DIAG_SCALE) >> 16);
-        dy = ((dy * DIAG_SCALE) >> 7) + ((dy * DIAG_SCALE) >> 9) + ((dy * DIAG_SCALE) >> 13) + ((dy * DIAG_SCALE) >> 14) + ((dy * DIAG_SCALE) >> 15) + ((dy * DIAG_SCALE) >> 16); 
+    if (dx && dy) {
+        dx = (dx * DIAG_SCALE) >> FP_SCALE;
+        dy = (dy * DIAG_SCALE) >> FP_SCALE;
     }
     
     // If no movement
     if (dx == 0 && dy == 0)
         return;
 
-    // Erase old tank (using Point for old position)
-    Point oldPos = { tank.position_x >> FP_SCALE, tank.position_y >> FP_SCALE };
-    eraseTank(oldPos);
-
     // Compute next fixed‑point position
     int32_t nextX = tank.position_x + dx;
     int32_t nextY = tank.position_y + dy;
+
+    // Point for erasing old tank
+    Point oldPos = { tank.position_x >> FP_SCALE, tank.position_y >> FP_SCALE };
 
     // Convert next position to integer for collision check
     Point nextPos = { nextX >> FP_SCALE, nextY >> FP_SCALE };
@@ -96,9 +91,12 @@ void controlTank(World *world) {
     direction.position_x = dx;
     direction.position_y = dy;
     sprite = selectTankSprite(direction);
-    
+
     // Draw new tank
     drawTank(tank, sprite);
+
+    eraseTankSelective(oldPos, tank, sprite);  // erase leftovers
+
 }
 int16_t getPlayerX(void) {
     return tank.position_x >> FP_SCALE;

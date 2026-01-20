@@ -3,6 +3,31 @@
 
 #define FP_SCALE 7  // Must match the value in movement.c
 
+static uint8_t spriteCovers(const char *sprite, int16_t sx, int16_t sy,
+                         int16_t px, int16_t py)
+{
+    uint8_t row = 0;
+    uint8_t col = 0;
+
+    for (uint16_t i = 0; sprite[i] != '\0'; i++) {
+        if (sprite[i] == '\n') {
+            row++;
+            col = 0;
+            continue;
+        }
+
+        int16_t tx = sx + col - (TANK_WIDTH >> 1);
+        int16_t ty = sy + row - (TANK_HEIGHT >> 1);
+
+        if (tx == px && ty == py)
+            return 1;
+
+        col++;
+    }
+    return 0;
+}
+
+
 void drawTank(object_t tank, const char *sprite)
 {
     // Convert from fixed-point to integer coordinates
@@ -28,15 +53,27 @@ void drawTank(object_t tank, const char *sprite)
 }
 
 
-void eraseTank(Point pos)
+void eraseTankSelective(Point oldPos, object_t newTank, const char *newSprite)
 {
+    int16_t newX = newTank.position_x >> FP_SCALE;
+    int16_t newY = newTank.position_y >> FP_SCALE;
+
     for (uint16_t row = 0; row < TANK_HEIGHT; row++) {
         for (uint16_t col = 0; col < TANK_WIDTH; col++) {
-            gotoxy(pos.x + col - (TANK_WIDTH >> 1), pos.y + row - (TANK_HEIGHT >> 1));
+
+            int16_t px = oldPos.x + col - (TANK_WIDTH >> 1);
+            int16_t py = oldPos.y + row - (TANK_HEIGHT >> 1);
+
+            // Skip erasing if the new tank already drew here
+            if (spriteCovers(newSprite, newX, newY, px, py))
+                continue;
+
+            gotoxy(px, py);
             printf(" ");
         }
     }
 }
+
 
 // Choose sprite based on direction (stored in position_x and position_y of the object)
 const char *selectTankSprite(object_t direction)

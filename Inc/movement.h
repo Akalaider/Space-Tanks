@@ -1,4 +1,7 @@
 #include "world.h"
+#include "tank.h"
+#include "ansi.h"
+#include "io.h"
 
 
 void initTank(void);

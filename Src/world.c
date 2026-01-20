@@ -4,25 +4,25 @@
 #include "ansi.h"
 #include "tank.h"
 
-Rect getTankRect(Point pos)
+Hitbox getTankHitbox(object_t tank)
 {
-    Rect r;
-    r.left   = pos.x - TANK_WIDTH  / 2;
-    r.right  = pos.x + TANK_WIDTH  / 2;
-    r.top    = pos.y - TANK_HEIGHT / 2;
-    r.bottom = pos.y + TANK_HEIGHT / 2;
-    return r;
+    Hitbox h;
+    h.left   = tank.position_x - (tank.a  >> 1);
+    h.right  = tank.position_x + (tank.a  >> 1);
+    h.top    = tank.position_y - (tank.b  >> 1);
+    h.bottom = tank.position_y + (tank.b  >> 1);
+    return h;
 }
 
 
-Rect getObstacleRect(Point pos, Point size)
+Hitbox getObstacleHitbox(Point pos, Point size)
 {
-    Rect r;
-    r.left   = pos.x;
-    r.right  = pos.x + size.x - 1;
-    r.top    = pos.y;
-    r.bottom = pos.y + size.y - 1;
-    return r;
+    Hitbox h;
+    h.left   = pos.x;
+    h.right  = pos.x + size.x - 1;
+    h.top    = pos.y;
+    h.bottom = pos.y + size.y - 1;
+    return h;
 }
 
 
@@ -95,7 +95,7 @@ void drawObstacle(Point position, const char* sprite, uint8_t width, uint8_t hei
 }
 
 
-uint8_t rectOverlap(Rect a, Rect b)
+uint8_t HitboxOverlap(Hitbox a, Hitbox b)
 {
     return !(a.right < b.left ||
              a.left > b.right ||
@@ -103,7 +103,7 @@ uint8_t rectOverlap(Rect a, Rect b)
              a.top > b.bottom);
 }
 
-CollisionSide getCollisionSide(Rect tank, Rect wall)
+CollisionSide getCollisionSide(Hitbox tank, Hitbox wall)
 {
     int overlapLeft   = tank.right  - wall.left;
     int overlapRight  = wall.right  - tank.left;
@@ -130,23 +130,23 @@ CollisionSide getCollisionSide(Rect tank, Rect wall)
 }
 
 
-CollisionSide rectCollision(Rect tank, Rect wall)
+CollisionSide HitboxCollision(Hitbox tank, Hitbox wall)
 {
-    if (!rectOverlap(tank, wall))
+    if (!HitboxOverlap(tank, wall))
         return COLLISION_NONE;
 
     return getCollisionSide(tank, wall);
 }
 
 
-CollisionSide checkWallCollisionAABB(Point tankPos, World *world)
+CollisionSide checkWallCollisionAABB(object_t tank, World *world)
 {
-    Rect tank = getTankRect(tankPos);
+    Hitbox tankhitbox = getTankHitbox(tank);
 
     for (uint16_t i = 0; i < world->count; i++) {
         WallSegment seg = world->segments[i];
 
-        Rect wall = {
+        Hitbox wall = {
             .left   = seg.p1.x,
             .right  = seg.p2.x,
             .top    = seg.p1.y,
@@ -161,7 +161,7 @@ CollisionSide checkWallCollisionAABB(Point tankPos, World *world)
             int16_t tmp = wall.top; wall.top = wall.bottom; wall.bottom = tmp;
         }
 
-        CollisionSide side = rectCollision(tank, wall);
+        CollisionSide side = HitboxCollision(tankhitbox, wall);
         if (side != COLLISION_NONE)
             return side;
     }

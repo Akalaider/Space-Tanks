@@ -1,4 +1,6 @@
 #include "info_lines.h"
+#include "movement.h"
+#include "object.h"
 
 void push_health(const object_t *player) { 
     uint8_t health = (player->c >> 2) & 0x03;
@@ -11,8 +13,11 @@ void push_health(const object_t *player) {
     else if (health == 2) {
         hearts = "              }~ {| {|";
     }
-    else {
+    else if (health == 1) {
         hearts = "              }~ }~ {|";
+    }
+    else {
+        hearts = "              }~ }~ }~";
     }
 
     uint8_t lcd_buffer[512] = {0};

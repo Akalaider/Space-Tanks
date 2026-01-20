@@ -4,14 +4,15 @@
 #include <stdio.h>
 #include "stm32f30x_conf.h" // STM32 config
 #include "30010_io.h" // Input/output library for this course
+#include "info_lines.h"
 
 #define OBJECTHANDLER_SIZE 64
 
 typedef enum {empty, bullet, player, enemy} objecttype;
-typedef struct {
+struct object_t{
 	objecttype type;
 	int32_t position_x, position_y, a, b, c;
-} object_t;
+};
 
 typedef struct World World;
 void initObjecthandler(object_t* objecthandler);

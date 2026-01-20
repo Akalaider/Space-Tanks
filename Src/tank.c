@@ -3,6 +3,7 @@
 
 #define FP_SCALE 7  // Must match the value in movement.c
 
+
 static uint8_t spriteCovers(const char *sprite, int16_t sx, int16_t sy,
                          int16_t px, int16_t py)
 {
@@ -27,8 +28,7 @@ static uint8_t spriteCovers(const char *sprite, int16_t sx, int16_t sy,
     return 0;
 }
 
-
-void drawTank(object_t tank, const char *sprite)
+void drawTank(object_t tank)
 {
     // Convert from fixed-point to integer coordinates
     int16_t x = tank.position_x >> FP_SCALE;
@@ -37,6 +37,9 @@ void drawTank(object_t tank, const char *sprite)
     uint8_t row = 0;
     uint8_t col = 0;
     fgcolor(10);
+
+    char *sprite = selectTankSprite(tank);
+
     for (uint8_t i = 0; sprite[i] != '\0'; i++) {
 
         if (sprite[i] == '\n') {
@@ -76,7 +79,7 @@ void eraseTankSelective(Point oldPos, object_t newTank, const char *newSprite)
 
 
 // Choose sprite based on direction (stored in position_x and position_y of the object)
-const char *selectTankSprite(object_t direction)
+char *selectTankSprite(object_t direction)
 {
     if (direction.position_x == 0 && direction.position_y == 0) return getTankUp();
     

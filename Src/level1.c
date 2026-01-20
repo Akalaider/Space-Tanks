@@ -9,9 +9,11 @@
 
 ai_t enemy1;
 void level1(void) {
-    push_health();
+    //push_health();
     clrscr();
     
+	object_t objecthandler[256];
+	clrscr();
     // Draw game arena
     Point outerWall[] = {
         {0, 0},
@@ -23,22 +25,33 @@ void level1(void) {
     World world = {0};
     
     drawWalls(outerWall, 4, 1, &world);
-    fgcolor(1);
-    drawObstacle((Point){30, 40}, getArrowRight(), 10, 8, &world);
-    fgcolor(15);
+    drawObstacle((Point){150, 45}, getAsteroid(), 21, 7, &world);
+
+    initTank();
+        //initAITank();
+
+    drawObstacle((Point){40, 15}, getOumuamua(), 8, 9, &world);
+
+
+    drawObstacle((Point){100, 35}, getAsteroid2(), 14, 9, &world);
+
+
+    drawObstacle((Point){155, 20}, getAsteroid3(), 20, 4, &world);
+
+
+    drawObstacle((Point){45, 45}, getAsteroid4(), 20, 9, &world);
+
+
+    drawObstacle((Point){90, 7}, getAsteroid5(), 15, 8, &world);
 
     initAITank(&enemy1);
 
-        
-    initTank();
-
-    setTankUpdateInterval(50); // 10 ms → 100 Hz
+    initTank(objecthandler[0]);
+	setTankUpdateInterval(50);
     // Game loop
     while (1) {
-        if (tankUpdateDue()) {
-            controlTank(&world);
-            controlAITank(&enemy1, &world);
-
-        }
+    	if (tankUpdateDue()){
+    		updateObject(&objecthandler, &world);
+    	}
     }
 }

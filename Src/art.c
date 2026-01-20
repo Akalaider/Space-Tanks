@@ -231,6 +231,84 @@ static const char blankArrow[] =
 "              \n"
 "              \n";
 
+static const char asteroid[] =
+"  ░██ ████████     \n"
+" ░█████      ░░██  \n"
+"░███ ░███     ░░░██\n"
+"░█ ░██████████ ░██ \n"
+" ░███████████ ░██  \n"
+"  ░█ ███████████   \n"
+"   ░█████████      \n";
+
+
+static const char oumuamua[] =
+" ░███  \n"
+"░████  \n"
+"░█ ░██ \n"
+"░██████\n"
+"░█████ \n"
+"░██ ██ \n"
+" ░█ ██ \n"
+" ░████ \n"
+"  ░██  \n";
+
+static const char asteroid2[] =
+"    ░████    \n"
+"  ░██ ████   \n"
+" ░██ ░█████  \n"
+"░█████ ██████\n"
+"░████  ░█ ░██\n"
+"░██████ █████\n"
+" ░█████████  \n"
+"  ░██ ░███   \n"
+"    ░███     \n";
+
+
+static const char asteroid3[] =
+"   ░█████   ░░███  \n"
+"██ █ ░█████████████\n"
+"███████████  ░█ ███\n"
+" █████ ░██  ░████  \n";
+
+static const char asteroid4[] =
+"   ░███ ░█████     \n"
+"  ░██████████████  \n"
+" ░████ ██  ░███████\n"
+" ░█ ██ ██ ░██  ░███\n"
+" ░██████  ░██████ █\n"
+"░█████ █ █ ███ ░███\n"
+"  ░█████ ███████   \n"
+"   ░███████████    \n"
+"      ░██████      \n";
+
+static const char asteroid5[] =
+"      ░███    \n"
+"    ░███████  \n"
+"  ░███  ░█ █  \n"
+"░████ ░███████\n"
+" ░█████ ░█ ██ \n"
+"   ░█ ░██████ \n"
+"    ░███ ██   \n"
+"      ░███    \n";
+
+
+static const char asteroid6[] =
+"      ░███      \n"
+"  ░████░███     \n"
+" ░██████████░██ \n"
+"░█░███ ░████████\n"
+"░██████████████ \n"
+" ░█████░█████   \n"
+"  ░█████████    \n"
+"    ░████       \n";
+
+
+/*static const char star1[] =
+"  █  \n"
+"█   █\n"
+"  █  \n";*/
+
+
 const char *getTankUp(void)        { return tankUp; }
 const char *getTankDown(void)      { return tankDown; }
 const char *getTankLeft(void)      { return tankLeft; }
@@ -254,3 +332,11 @@ const char *getArrowLeft(void)     { return arrowLeft; }
 const char *getArrowRight(void)    { return arrowRight; }
 const char *getArrowDown(void)     { return arrowDown; }
 const char *getBlankArrow(void)    { return blankArrow; }
+
+const char *getAsteroid(void)	   { return asteroid; }
+const char *getOumuamua(void)      { return oumuamua; }
+const char *getAsteroid2(void)     { return asteroid2; }
+const char *getAsteroid3(void)     { return asteroid3; }
+const char *getAsteroid4(void)     { return asteroid4; }
+const char *getAsteroid5(void)     { return asteroid5; }
+const char *getAsteroid6(void)	   { return asteroid6; }

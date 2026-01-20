@@ -16,7 +16,7 @@
 
 // Public API
 void initAITank(object_t *ai);
-void controlAITank(object_t *ai, World *world);
+void controlAITank(object_t *ai, object_t *objecthandler, World *world);
 
 
 

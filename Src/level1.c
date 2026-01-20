@@ -21,16 +21,18 @@ void level1(void) {
     drawWalls(outerWall, 4, 1, &world);
 
     object_t objecthandler[OBJECTHANDLER_SIZE];
-    initObjecthandler(&objecthandler);
+    initObjecthandler(objecthandler);
 
     initTank(&objecthandler[0]);
     push_health(&objecthandler[0]);
+    initAITank(&objecthandler[1]);    // enemy 1
+
     
     setTankUpdateInterval(50); // 10 ms → 100 Hz
     // Game loop
     while (1) {
         if (tankUpdateDue()) {
-            updateObject(&objecthandler, &world);
+            updateObject(objecthandler, &world);
         }
     }
 }

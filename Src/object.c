@@ -39,7 +39,7 @@ void updateObject(object_t* objecthandler, World* world){
 				push_health(&objecthandler[i]);
 				break;
 			case enemy:
-				//add enemy update
+				controlAITank(&objecthandler[i], objecthandler, world);
 				break;
 		}
 	}

@@ -9,6 +9,7 @@
 
 ai_t enemy1;
 void level1(void) {
+    push_health();
     clrscr();
     
     // Draw game arena

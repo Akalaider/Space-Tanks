@@ -150,10 +150,9 @@ CollisionSide HitboxCollision(Hitbox tank, Hitbox wall)
 
 CollisionSide checkWallCollisionAABB(object_t object, World *world)
 {
-    if (object.type == player)
-        Hitbox objecthitbox = getTankHitbox(object);
-    if (object.type == bullet)
-        Hitbox objecthitbox = getBulletHitbox(object);
+    Hitbox objecthitbox;
+    if (object.type == player) {objecthitbox = getTankHitbox(object);}
+    if (object.type == bullet) {objecthitbox = getBulletHitbox(object);}
 
 
     for (uint16_t i = 0; i < world->count; i++) {

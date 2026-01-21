@@ -1,4 +1,5 @@
 .DS_Store
+.settings/
 
 # Allow ONLY .c files in Src/
 !Src/*.c

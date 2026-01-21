@@ -33,9 +33,9 @@ void level1(void) {
 
     initTank(&objecthandler[0]);
     timer_attachPlayerTank(&objecthandler[0]); // For cooldowns
-
     push_info_lcd(&objecthandler[0]);
-    initAITank(&objecthandler[1]);    // enemy 1
+
+    initAITank(&objecthandler[1], 200, 10);    // enemy 1
 
     
     setTankUpdateInterval(50); // 10 ms → 100 Hz

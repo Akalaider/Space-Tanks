@@ -31,7 +31,7 @@ void updateObject(object_t* objecthandler, World* world){
 			case empty:
 				break;
 			case bullet:
-				updateBullet(objecthandler[i],&objecthandler, world);
+				updateBullet(&objecthandler[i],&objecthandler, world);
 				break;
 			case player:
 				controlTank(&objecthandler, world, &objecthandler[i]);
@@ -40,6 +40,8 @@ void updateObject(object_t* objecthandler, World* world){
 			case enemy:
 				controlAITank(&objecthandler[i], objecthandler, world);
 				break;
+			case powerup:
+				updatePowerup(&objecthandler[i], &objecthandler, world);
 		}
 	}
 }

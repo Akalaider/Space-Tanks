@@ -8,7 +8,7 @@
 
 #define OBJECTHANDLER_SIZE 64
 
-typedef enum {empty, bullet, player, enemy} objecttype;
+typedef enum {empty, bullet, player, enemy, powerup} objecttype;
 struct object_t{
 	objecttype type;
 	int32_t position_x, position_y, a, b, c;

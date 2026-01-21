@@ -100,7 +100,7 @@ static void drawHighscoresMenu(void) {
     printCp850At(10, 25, getController());
     gotoxy(20, 20);
     fgcolor(12);
-    printf("Player 2");
+    printf("Player 2 - Press SPACE for normal bullets");
     printCp850At(130, 17, getKeyboard());
     gotoxy(40, 67);
     fgcolor(13);

@@ -1,9 +1,5 @@
 #include "movement.h"
 
-uint8_t getTankBullets(const object_t *tank) {
-    return (tank->c >> 8) & 0x07;   // 3 bits
-}
-
 void setTankBullets(object_t *tank, uint8_t bullets) {
     tank->c &= ~(0x07 << 8);        // clear bits
     tank->c |= ((bullets & 0x07) << 8);
@@ -62,7 +58,7 @@ void controlTank(object_t *objecthandler, World *world, object_t *tank)
 
     // Note: Use index of sprite determine direction
     if((joy & JOY_BUTTON1 || joy & JOY_CENTER) && ("cooldown" == 0 || 1)){
-    	if((getTankPowerup(&tank) & 1) == 0){
+    	if((getTankPowerup(tank) & 1) == 0){
     		shootBullet(tank, objecthandler, (tank->c & (0x07 << 4)) >> 4, 1);
     	} else {
     		shootBullet(tank, objecthandler, (tank->c & (0x07 << 4)) >> 4, 3);

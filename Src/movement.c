@@ -57,7 +57,7 @@ void controlTank(object_t *objecthandler, World *world, object_t *tank)
 
 
     // Note: Use index of sprite determine direction
-    if((joy & JOY_BUTTON1 || joy & JOY_CENTER) && ("cooldown" == 0 || 1)){
+    if(joy & JOY_BUTTON1 || joy & JOY_CENTER){
     	if((getTankPowerup(tank) & 1) == 0){
     		shootBullet(tank, objecthandler, (tank->c & (0x07 << 4)) >> 4, 1);
     	} else {

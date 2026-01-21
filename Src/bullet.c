@@ -8,6 +8,8 @@
 #include "movement.h"
 
 void shootBullet(object_t *player, object_t *objecthandler, uint8_t direction, uint8_t bullettype){
+	// if (getTankCooldown(player) != 0) return;
+
 	// Check ammo
 	uint8_t bullets = getTankBullets(player);
 	if (bullets == 0)

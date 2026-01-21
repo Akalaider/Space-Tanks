@@ -3,7 +3,7 @@
 
 #define AI_DIRECT 0
 #define AI_HUG 1
-void initAITank(object_t *ai);
+void initAITank(object_t *ai, int16_t x, int16_t y);
 void controlAITank(object_t *ai, object_t *objecthandler, World *world);
 #define FP_SCALE 7
 

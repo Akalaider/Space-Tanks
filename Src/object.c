@@ -7,7 +7,6 @@ void initObjecthandler(object_t* objecthandler){
 	}
 }
 
-
 void spawnObject(object_t* objecthandler, object_t object){
 	for(uint8_t i = 0; i < OBJECTHANDLER_SIZE; i++){
 		if(objecthandler[i].type == empty){
@@ -36,7 +35,7 @@ void updateObject(object_t* objecthandler, World* world){
 				break;
 			case player:
 				controlTank(world, &objecthandler[i]);
-				push_health(&objecthandler[i]);
+				push_info_lcd(&objecthandler[i]);
 				break;
 			case enemy:
 				controlAITank(&objecthandler[i], objecthandler, world);

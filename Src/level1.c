@@ -15,16 +15,24 @@ void level1(void) {
         {240, 72},
         {0, 72}
     };
+
+    Point box[] = {
+        {50, 20},
+        {70, 20},
+        {70, 30},
+        {50, 30}
+    };
     
     World world = {0};
     
     drawWalls(outerWall, 4, 1, &world);
+    drawWalls(box, 4, 1, &world);
 
     object_t objecthandler[OBJECTHANDLER_SIZE];
     initObjecthandler(objecthandler);
 
     initTank(&objecthandler[0]);
-    push_health(&objecthandler[0]);
+    push_info_lcd(&objecthandler[0]);
     initAITank(&objecthandler[1]);    // enemy 1
 
     

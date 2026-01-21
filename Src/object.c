@@ -40,6 +40,8 @@ void updateObject(object_t* objecthandler, World* world){
 			case enemy:
 				controlAITank(&objecthandler[i], objecthandler, world);
 				break;
+			case powerup:
+				updatePowerup(&objecthander[i], &objecthandler, world)
 		}
 	}
 }

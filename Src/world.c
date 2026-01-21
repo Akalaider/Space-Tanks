@@ -17,10 +17,10 @@ Hitbox getTankHitbox(object_t tank)
 Hitbox getBulletHitbox(object_t bullet)
 {
     Hitbox h;
-    h.left   = bullet.position_x - 1;
-    h.right  = bullet.position_x + 1;
-    h.top    = bullet.position_y - 1;
-    h.bottom = bullet.position_y + 1;
+    h.left   = bullet.position_x - 3;
+    h.right  = bullet.position_x + 3;
+    h.top    = bullet.position_y - 3;
+    h.bottom = bullet.position_y + 3;
     return h;
 }
 
@@ -154,8 +154,11 @@ CollisionSide checkWallCollisionAABB(object_t object, World *world)
     if (object.type == player || object.type == enemy) {objecthitbox = getTankHitbox(object);}
     if (object.type == bullet) {objecthitbox = getBulletHitbox(object);}
 
-
     for (uint16_t i = 0; i < world->count; i++) {
+    	if (object.type == bullet){
+    		gotoxy(40,9);
+    		printf("NP");
+    	}
         WallSegment seg = world->segments[i];
 
         Hitbox wall = {
@@ -172,11 +175,22 @@ CollisionSide checkWallCollisionAABB(object_t object, World *world)
         if (wall.top > wall.bottom) {
             int16_t tmp = wall.top; wall.top = wall.bottom; wall.bottom = tmp;
         }
+        gotoxy(10,14+i);
+        printf("left: %d right: %d top: %d buttom: %d",wall.left,wall.right,wall.top,wall.bottom);
+    	if (object.type != player && object.type != enemy){
+    		gotoxy(40,9);
+    		printf("TYPE RAW: %d\n", object.type);
+    		//printf("left: %05d right: %05d top: %05d buttom: %05d",objecthitbox.left,objecthitbox.right,objecthitbox.top,objecthitbox.bottom);
 
+        }
         CollisionSide side = HitboxCollision(objecthitbox, wall);
-        if (side != COLLISION_NONE)
-            return side;
+        if (side != COLLISION_NONE){
+        	return side;
+        }
     }
-
+    if (object.type == bullet){
+    	gotoxy(40,6);
+    	printf("HOW!!!!!!!!!!");
+    }
     return COLLISION_NONE;
 }

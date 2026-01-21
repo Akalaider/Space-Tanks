@@ -1,5 +1,6 @@
 #include "30010_io.h" // Input/output library for this course
 #include "tank.h"
+#include "movement.h"
 
 #define FP_SCALE 7  // Must match the value in movement.c
 
@@ -35,11 +36,23 @@ void drawTank(object_t tank, const char *sprite)
 
     uint8_t row = 0;
     uint8_t col = 0;
+
     switch (tank.type) {
-        case player: fgcolor(10); break;
-        case enemy: fgcolor(9); break;
+        case player: {
+            int p = getPlayer(&tank);
+            if (p == 2) {
+                fgcolor(10);
+            } else {
+                fgcolor(12);
+            }
+            break;
+        }
+
+        case enemy:
+            fgcolor(9);
+            break;
     }
-    
+
 
     for (uint16_t i = 0; sprite[i] != '\0'; i++) {
 

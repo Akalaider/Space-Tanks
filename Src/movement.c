@@ -90,6 +90,7 @@ void controlTank(World *world, object_t *tank)
 
 int16_t getTankX(const object_t *tank) { return tank->position_x >> FP_SCALE; }
 int16_t getTankY(const object_t *tank) { return tank->position_y >> FP_SCALE; }
+uint8_t getPlayer(const object_t *tank) { return (tank->c) & 0x03; }
 uint8_t getTankHealth(const object_t *tank) { return (tank->c >> 2) & 0x03; }
 uint8_t getTankSpriteIndex(const object_t *tank) { return (tank->c >> 4) & 0x07; }
 uint8_t getTankBullets(const object_t *tank) { return (tank->c >> 8) & 0x07; }

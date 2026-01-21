@@ -15,20 +15,20 @@ struct Star {
 
 // Liste af stjerner i level 1
 static struct Star stars[] = {
-    { { 5, 10 },  { 5, 3 }, getStar1 },
-    { { 20, 15 }, { 8, 5 }, getStar2 },
-    { { 50, 40 }, { 3, 3 }, getStar3 },
-    { { 135, 35 }, { 10, 7 }, getStar4 },
-	{ { 90, 30 }, { 5, 3 }, getStar1 },
-	{ { 200, 60 }, { 3, 3 }, getStar3 },
-	{ { 15, 55 }, { 10, 7 }, getStar4 },
-	{ { 140, 47 }, { 8, 5 }, getStar2 },
-	{ { 180, 15 },  { 5, 3 }, getStar1 },
-	{ { 170, 45 }, { 3, 3 }, getStar3 },
-	{ { 120, 62 },  { 5, 3 }, getStar1 },
-	{ { 85, 20 }, { 8, 5 }, getStar2 },
-	{ { 110, 12 },  { 5, 3 }, getStar1 },
-	{ { 160, 15 }, { 8, 5 }, getStar2 },
+    { { 40, 17 },  { 5, 3 }, getStar1 },
+    { { 200, 50 }, { 8, 5 }, getStar2 },
+    { { 120, 37 }, { 3, 3 }, getStar3 },
+    { { 140, 42 }, { 10, 7 }, getStar4 },
+	{ { 190, 10 }, { 5, 3 }, getStar1 },
+	{ { 20, 44 }, { 3, 3 }, getStar3 },
+	{ { 15, 30 }, { 10, 7 }, getStar4 },
+	{ { 90, 7 }, { 8, 5 }, getStar2 },
+	{ { 75, 46 },  { 5, 3 }, getStar1 },
+	{ { 105, 55 }, { 3, 3 }, getStar3 },
+	{ { 163, 30 },  { 5, 3 }, getStar1 },
+	{ { 67, 60 }, { 8, 5 }, getStar2 },
+	{ { 80, 33 },  { 5, 3 }, getStar1 },
+	{ { 135, 20 }, { 8, 5 }, getStar2 },
 
 };
 static const uint8_t starCount = sizeof(stars) / sizeof(stars[0]);
@@ -59,7 +59,7 @@ void level3(void) {
     Point innerWall1[] = {
         {25, 20}, {25, 10}, {85, 10}
     };
-    drawWalls(innerWall1, 6, 0, &world);
+    drawWalls(innerWall1, 3, 0, &world);
 
     Point innerWall2[] = {
     		{105, 10}, {105, 40},

@@ -43,7 +43,6 @@ static uint8_t starOverlap(Point tankPos, struct Star s) {
 
 void level2(void) {
 
-    initTank(&playerTank);
     clrscr();
 
     // Ydre væg
@@ -86,14 +85,25 @@ void level2(void) {
     setTankUpdateInterval(50); // 100 Hz
 
     // Game loop
-    while (1) {
-        if (tankUpdateDue()) {
+    object_t objecthandler[OBJECTHANDLER_SIZE];
+       initObjecthandler(objecthandler);
 
-            controlTank(&world, &playerTank);
+       initTank(&objecthandler[0]);
+       push_info_lcd(&objecthandler[0]);
+       initAITank(&objecthandler[1]);    // enemy 1
+
+
+       setTankUpdateInterval(50); // 10 ms → 100 Hz
+       // Game loop
+       while (1) {
+           if (tankUpdateDue()) {
+               updateObject(objecthandler, &world);
+           }
+       }
 
             Point tankPos = {
-                getTankX(&playerTank),
-                getTankY(&playerTank)
+                getTankX(objecthandler),
+                getTankY(objecthandler)
             };
 
             // Restore stjerner
@@ -104,6 +114,6 @@ void level2(void) {
                     fgcolor(15);
                 }
             }
-        }
-    }
+
 }
+

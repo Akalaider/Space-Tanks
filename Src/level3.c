@@ -5,7 +5,8 @@
 #include "movement.h"
 #include "io.h"
 #include "timer.h"
-static object_t playerTank;
+#include "art.h"
+
 
 struct Star {
     Point pos;
@@ -43,7 +44,7 @@ static uint8_t starOverlap(Point tankPos, struct Star s) {
 
 //ai_t enemy1;
 void level3(void) {
-	initTank(&playerTank);
+
 
     clrscr();
 
@@ -108,32 +109,34 @@ void level3(void) {
     drawObstacle((Point){177, 14}, getAsteroid(), 21, 7, &world);
 
 
-
-    object_t player;
-
-    initTank(&player);
-
     setTankUpdateInterval(50); // 10 ms → 100 Hz
 
     // Game loop
-    while (1) {
-          if (tankUpdateDue()) {
+       object_t objecthandler[OBJECTHANDLER_SIZE];
+          initObjecthandler(objecthandler);
 
-              controlTank(&world, &playerTank);
+          initTank(&objecthandler[0]);
+          push_info_lcd(&objecthandler[0]);
+          initAITank(&objecthandler[1]);    // enemy 1
 
-              Point tankPos = {
-              getTankX(&playerTank),
-              getTankY(&playerTank)
-              };
+          while (1) {
+                if (tankUpdateDue()) {
+                   updateObject(objecthandler, &world);
+                }
 
-                    // Restore stjerner
-              for (uint8_t i = 0; i < starCount; i++) {
-                   if (!starOverlap(tankPos, stars[i])) {
+
+                Point tankPos = {
+                getTankX(&objecthandler[0]),
+                getTankY(&objecthandler[0])
+                };
+
+                // Restore stjerner
+                for (uint8_t i = 0; i < starCount; i++) {
+                    if (!starOverlap(tankPos, stars[i])) {
                        fgcolor(11);
                        printCp850At(stars[i].pos.x, stars[i].pos.y, stars[i].sprite());
                        fgcolor(15);
-                   }
-              }
-         }
-    }
+                    }
+                }
+          }
 }

@@ -1,29 +1,11 @@
 #include "movement.h"
-#include "world.h"
-#include "tank.h"
-#include "ansi.h"
-#include "io.h"
 #include "aimovement.h"
-
-#define FP_SCALE 7
-
-#define AI_SPEED_X 120
-#define AI_SPEED_Y 80
-#define DIAG_SCALE 91   // ≈ 1/sqrt(2) * 128
-
-#define AI_STATE_MASK   0x03        // bit 0-1
-#define GET_STATE(ai)   ((ai)->c & AI_STATE_MASK)
-#define SET_STATE(ai,s) ((ai)->c = ((ai)->c & ~AI_STATE_MASK) | (s))
-
-#define SPRITE_SHIFT    4
-#define SPRITE_MASK     (0x07 << SPRITE_SHIFT)
-#define SET_SPRITE(ai,idx) ((ai)->c = ((ai)->c & ~SPRITE_MASK) | ((idx) << SPRITE_SHIFT))
 
 void initAITank(object_t *ai)
 {
     ai->type       = enemy;
-    ai->position_x = 120 << FP_SCALE;
-    ai->position_y = 20  << FP_SCALE;
+    ai->position_x = 200 << FP_SCALE;
+    ai->position_y = 10  << FP_SCALE;
 
     ai->a = TANK_WIDTH;
     ai->b = TANK_HEIGHT;

@@ -35,8 +35,11 @@ void drawTank(object_t tank, const char *sprite)
 
     uint8_t row = 0;
     uint8_t col = 0;
-
-    fgcolor(10);
+    switch (tank.type) {
+        case player: fgcolor(10); break;
+        case enemy: fgcolor(9); break;
+    }
+    
 
     for (uint16_t i = 0; sprite[i] != '\0'; i++) {
 

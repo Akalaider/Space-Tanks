@@ -17,8 +17,10 @@
 
 #define DIAG_SCALE 91 // ≈ 1/sqrt(2) * 128
 
+uint8_t getTankBullets(const object_t *tank);
+void setTankBullets(object_t *tank, uint8_t bullets);
 void initTank(object_t *tank);
-void controlTank(World *world, object_t *tank);
+void controlTank(object_t *objecthandler, World *world, object_t *tank);
 uint8_t readController(const object_t *tank);
 int16_t getTankX(const object_t *tank);
 int16_t getTankY(const object_t *tank);
@@ -28,5 +30,6 @@ uint8_t getTankSpriteIndex(const object_t *tank);
 uint8_t getTankBullets(const object_t *tank);
 uint8_t getTankHomings(const object_t *tank);
 uint8_t getTankPowerup(const object_t *tank);
+uint16_t getTankCooldown(const object_t *tank) { return (tank->c >> 17) & 0x3FF; }
 
 #endif

@@ -15,6 +15,7 @@ typedef struct{
 } stopwatch;
 static volatile stopwatch sw = {0};
 
+void timer_attachPlayerTank(object_t *tank);
 void setTankUpdateInterval(uint16_t intervalMS);
 uint8_t tankUpdateDue(void);
 void timer_attachBlink(BlinkController *b);

@@ -32,6 +32,8 @@ void level1(void) {
     initObjecthandler(objecthandler);
 
     initTank(&objecthandler[0]);
+    timer_attachPlayerTank(&objecthandler[0]); // For cooldowns
+
     push_info_lcd(&objecthandler[0]);
     initAITank(&objecthandler[1]);    // enemy 1
 

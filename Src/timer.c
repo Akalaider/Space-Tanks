@@ -2,12 +2,17 @@
 #include "blink.h"
 
 static BlinkController *blinkPtr = NULL;
+static object_t *playerTankPtr = NULL;
 static uint8_t lcdFlag = 0;
 
 // Timer for limiting tank updates (control tank)
 static volatile uint8_t tankUpdateFlag = 0; 
 static volatile uint16_t tankCounterMS = 0; 
 static volatile uint16_t tankIntervalMS = 20; // ≈ 50 Hz
+
+void timer_attachPlayerTank(object_t *tank) {
+    playerTankPtr = tank;
+}
 
 void setTankUpdateInterval(uint16_t intervalMS) {
     tankIntervalMS = intervalMS;
@@ -73,6 +78,31 @@ void TIM1_BRK_TIM15_IRQHandler() {
 		tankCounterMS = 0;
 		tankUpdateFlag = 1;
 	}
+
+	if (playerTankPtr != NULL) {
+
+		// Cooldown countdown
+		uint16_t cd = getTankCooldown(playerTankPtr);
+		if (cd > 0) {
+			cd--;
+			playerTankPtr->c &= ~(0x3FF << 17);
+			playerTankPtr->c |= (cd << 17);
+		}
+
+		// Ammo regeneration
+		if (cd == 0) {  // cooldown done
+			uint8_t bullets = getTankBullets(playerTankPtr);
+			if (bullets < 5) {
+				setTankBullets(playerTankPtr, bullets + 1);
+
+				// restart cooldown for next regen
+				playerTankPtr->c &= ~(0x3FF << 17);
+				playerTankPtr->c |= (500 << 17);
+			}
+		}
+	}
+
+
 
 	// Blink timing
 	if (blinkPtr) { 

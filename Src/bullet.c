@@ -8,10 +8,25 @@
 #include "movement.h"
 
 void shootBullet(object_t *player, object_t *objecthandler, uint8_t direction, uint8_t bullettype){
+	// Check ammo
+	uint8_t bullets = getTankBullets(player);
+	if (bullets == 0)
+		return; // no ammo
+
+	// Consume one bullet
+	player->c &= ~(0x07 << 8);
+	player->c |= ((bullets - 1) << 8);
+
+	// Reset cooldown to 500 ms
+	player->c &= ~(0x3FF << 17);
+	player->c |= (500 << 17);
+
 	uint8_t i = 0;
-	for (; i<64;i++){
-		if(objecthandler->type == empty) break;
+	for (; i < 64; i++) {
+		if (objecthandler[i].type == empty)
+			break;
 	}
+
 
 	objecthandler[i].type = bullet;
 	objecthandler[i].c = bullettype; //bullettype: 0 -> homing -- 1 -> normal -- +2 -> ricochet (number of bounces = bullettype - 1)

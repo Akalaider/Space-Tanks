@@ -1,5 +1,11 @@
 #include "movement.h"
 
+void setTankBullets(object_t *tank, uint8_t bullets) {
+    tank->c &= ~(0x07 << 8);        // clear bits
+    tank->c |= ((bullets & 0x07) << 8);
+}
+
+
 void initTank(object_t *tank)
 {
     tank->type = player;
@@ -15,6 +21,8 @@ void initTank(object_t *tank)
     tank->c |= (5 << 8);         // Set bullets to 5
     tank->c |= (3 << 11);        // Set homing bullets to 3
     tank->c |= (0 << 14);		 // PowerupMode: bx00 -> no powerUp -- bxX1 -> ricochet bullet -- bx1X -> speedBoost
+    tank->c &= ~(0x3FF << 17);     // clear value 
+    tank->c |= (500 << 17);      // store cooldown value
 
     const char *sprite = selectTankSprite(getTankSpriteIndex(tank));
     drawTank(*tank, sprite);
@@ -50,7 +58,7 @@ void controlTank(object_t *objecthandler, World *world, object_t *tank)
 
     // Note: Use index of sprite determine direction
     if((joy & JOY_BUTTON1 || joy & JOY_CENTER) && ("cooldown" == 0 || 1)){
-    	if((getTankPowerup(&tank) & 1) == 0){
+    	if((getTankPowerup(tank) & 1) == 0){
     		shootBullet(tank, objecthandler, (tank->c & (0x07 << 4)) >> 4, 1);
     	} else {
     		shootBullet(tank, objecthandler, (tank->c & (0x07 << 4)) >> 4, 3);
@@ -107,3 +115,4 @@ uint8_t getTankSpriteIndex(const object_t *tank) { return (tank->c >> 4) & 0x07;
 uint8_t getTankBullets(const object_t *tank) { return (tank->c >> 8) & 0x07; }
 uint8_t getTankHomings(const object_t *tank) { return (tank->c >> 11) & 0x07; }
 uint8_t getTankPowerup(const object_t *tank) { return (tank->c >> 14) & 0x03; }
+uint16_t getTankCooldown(const object_t *tank) { return (tank->c >> 17) & 0x3FF; }

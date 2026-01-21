@@ -1,16 +1,5 @@
 #include "movement.h"
 
-// Fixed‑point scale factor (128 = 7 bits)
-#define FP_SCALE 7
-
-// Tunable speeds 
-
-#define SPEED_X 400 // horizontal speed
-#define SPEED_Y 240 // vertical speed (rows are taller)
-
-
-#define DIAG_SCALE 91 // ≈ 1/sqrt(2) * 128
-
 void initTank(object_t *tank)
 {
     tank->type = player;

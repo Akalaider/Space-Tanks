@@ -6,7 +6,7 @@
 #include "timer.h"
 #include "art.h"
 
-static object_t playerTank;
+
 
 struct Star {
     Point pos;
@@ -93,17 +93,15 @@ void level2(void) {
        initAITank(&objecthandler[1]);    // enemy 1
 
 
-       setTankUpdateInterval(50); // 10 ms → 100 Hz
-       // Game loop
        while (1) {
            if (tankUpdateDue()) {
                updateObject(objecthandler, &world);
            }
-       }
+
 
             Point tankPos = {
-                getTankX(objecthandler),
-                getTankY(objecthandler)
+                getTankX(&objecthandler[0]),
+                getTankY(&objecthandler[0])
             };
 
             // Restore stjerner
@@ -114,6 +112,6 @@ void level2(void) {
                     fgcolor(15);
                 }
             }
-
+      }
 }
 

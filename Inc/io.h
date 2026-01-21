@@ -12,6 +12,8 @@ void setupClock();
 #define JOY_LEFT (1 << 2) 
 #define JOY_RIGHT (1 << 3) 
 #define JOY_CENTER (1 << 4)
+#define JOY_BUTTON1 (1 << 5)
+#define JOY_BUTTON2 (1 << 5)
 
 #define JOYSTICK_CONTROL 0 
 #define KEYBOARD_CONTROL 1 

@@ -5,6 +5,7 @@
 #include "object.h"
 #include "tank.h"
 #include "io.h"
+#include "bullet.h"
 // Fixed‑point scale factor (128 = 7 bits)
 #define FP_SCALE 7
 
@@ -26,5 +27,6 @@ uint8_t getTankHealth(const object_t *tank);
 uint8_t getTankSpriteIndex(const object_t *tank);
 uint8_t getTankBullets(const object_t *tank);
 uint8_t getTankHomings(const object_t *tank);
+uint8_t getTankPowerup(const object_t *tank);
 
 #endif

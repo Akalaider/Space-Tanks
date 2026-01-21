@@ -14,6 +14,7 @@ void initTank(object_t *tank)
     tank->c |= (0 << 4);         // sprite index = 0
     tank->c |= (5 << 8);         // Set bullets to 5
     tank->c |= (3 << 11);        // Set homing bullets to 3
+    tank->c |= (0 << 14);		 // PowerupMode: bx00 -> no powerUp -- bxX1 -> ricochet bullet -- bx1X -> speedBoost
 
     const char *sprite = selectTankSprite(getTankSpriteIndex(tank));
     drawTank(*tank, sprite);
@@ -35,7 +36,7 @@ uint8_t readController(const object_t *tank){
 	}
 }
 
-void controlTank(World *world, object_t *tank)
+void controlTank(object_t *objecthandler, World *world, object_t *tank)
 {
     uint8_t joy = readController(tank);
 
@@ -45,6 +46,16 @@ void controlTank(World *world, object_t *tank)
     if (joy & JOY_DOWN)  dy =  SPEED_Y;
     if (joy & JOY_LEFT)  dx = -SPEED_X;
     if (joy & JOY_RIGHT) dx =  SPEED_X;
+
+
+    // Note: Use index of sprite determine direction
+    if((joy & JOY_BUTTON1 || joy & JOY_CENTER) && ("cooldown" == 0 || 1)){
+    	if((getTankPowerup(&tank) & 1) == 0){
+    		shootBullet(tank, objecthandler, (tank->c & (0x07 << 4)) >> 4, 1);
+    	} else {
+    		shootBullet(tank, objecthandler, (tank->c & (0x07 << 4)) >> 4, 3);
+    	}
+    }
 
     if (dx == 0 && dy == 0)
         return;
@@ -69,14 +80,14 @@ void controlTank(World *world, object_t *tank)
     // update sprite bits
     uint8_t spriteIndex = 0;
 
-    if (dx == 0 && dy < 0) spriteIndex = 0;
-    else if (dx > 0 && dy < 0) spriteIndex = 1;
-    else if (dx > 0 && dy == 0) spriteIndex = 2;
-    else if (dx > 0 && dy > 0) spriteIndex = 3;
-    else if (dx == 0 && dy > 0) spriteIndex = 4;
-    else if (dx < 0 && dy > 0) spriteIndex = 5;
-    else if (dx < 0 && dy == 0) spriteIndex = 6;
-    else if (dx < 0 && dy < 0) spriteIndex = 7;
+    if (dx == 0 && dy < 0) spriteIndex = 0; //UP
+    else if (dx > 0 && dy < 0) spriteIndex = 1; //RIGHT&UP
+    else if (dx > 0 && dy == 0) spriteIndex = 2; //RIGHT
+    else if (dx > 0 && dy > 0) spriteIndex = 3; //RIGHT&DOWN
+    else if (dx == 0 && dy > 0) spriteIndex = 4; //DOWN
+    else if (dx < 0 && dy > 0) spriteIndex = 5; //LEFT&DOWN
+    else if (dx < 0 && dy == 0) spriteIndex = 6; //LEFT
+    else if (dx < 0 && dy < 0) spriteIndex = 7; //LEFT&UP
 
     tank->c &= ~(0x07 << 4);
     tank->c |= (spriteIndex << 4);
@@ -95,3 +106,4 @@ uint8_t getTankHealth(const object_t *tank) { return (tank->c >> 2) & 0x03; }
 uint8_t getTankSpriteIndex(const object_t *tank) { return (tank->c >> 4) & 0x07; }
 uint8_t getTankBullets(const object_t *tank) { return (tank->c >> 8) & 0x07; }
 uint8_t getTankHomings(const object_t *tank) { return (tank->c >> 11) & 0x07; }
+uint8_t getTankPowerup(const object_t *tank) { return (tank->c >> 14) & 0x03; }

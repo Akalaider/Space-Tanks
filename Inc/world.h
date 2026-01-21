@@ -39,6 +39,7 @@ typedef enum {
 
 
 Hitbox getTankHitbox(object_t tank);
+Hitbox getBulletHitbox(object_t bullet);
 Hitbox getObstacleHitbox(Point pos, Point size);
 uint8_t HitboxOverlap(Hitbox a, Hitbox b);
 void drawWalls(Point* positions, uint8_t numPoints, uint8_t closePath, World* world);

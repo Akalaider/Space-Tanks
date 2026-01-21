@@ -14,6 +14,15 @@ Hitbox getTankHitbox(object_t tank)
     return h;
 }
 
+Hitbox getBulletHitbox(object_t bullet)
+{
+    Hitbox h;
+    h.left   = bullet.position_x - 1;
+    h.right  = bullet.position_x + 1;
+    h.top    = bullet.position_y - 1;
+    h.bottom = bullet.position_y + 1;
+    return h;
+}
 
 Hitbox getObstacleHitbox(Point pos, Point size)
 {
@@ -139,9 +148,13 @@ CollisionSide HitboxCollision(Hitbox tank, Hitbox wall)
 }
 
 
-CollisionSide checkWallCollisionAABB(object_t tank, World *world)
+CollisionSide checkWallCollisionAABB(object_t object, World *world)
 {
-    Hitbox tankhitbox = getTankHitbox(tank);
+    if (object.type == player)
+        Hitbox objecthitbox = getTankHitbox(object);
+    if (object.type == bullet)
+        Hitbox objecthitbox = getBulletHitbox(object);
+
 
     for (uint16_t i = 0; i < world->count; i++) {
         WallSegment seg = world->segments[i];
@@ -161,7 +174,7 @@ CollisionSide checkWallCollisionAABB(object_t tank, World *world)
             int16_t tmp = wall.top; wall.top = wall.bottom; wall.bottom = tmp;
         }
 
-        CollisionSide side = HitboxCollision(tankhitbox, wall);
+        CollisionSide side = HitboxCollision(objecthitbox, wall);
         if (side != COLLISION_NONE)
             return side;
     }

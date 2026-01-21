@@ -23,7 +23,8 @@ void initTank(object_t *tank)
     tank->c |= HAT_CONTROL;      // control mode = hat
     tank->c |= (3 << 2);         // health = 3
     tank->c |= (0 << 4);         // sprite index = 0
-    tank->c |= (5 << 8);         // Set ammo to 5
+    tank->c |= (5 << 8);         // Set bullets to 5
+    tank->c |= (3 << 11);        // Set homing bullets to 3
 
     const char *sprite = selectTankSprite(getTankSpriteIndex(tank));
     drawTank(*tank, sprite);
@@ -102,4 +103,5 @@ int16_t getTankX(const object_t *tank) { return tank->position_x >> FP_SCALE; }
 int16_t getTankY(const object_t *tank) { return tank->position_y >> FP_SCALE; }
 uint8_t getTankHealth(const object_t *tank) { return (tank->c >> 2) & 0x03; }
 uint8_t getTankSpriteIndex(const object_t *tank) { return (tank->c >> 4) & 0x07; }
-uint8_t getTankAmmo(const object_t *tank) { return (tank->c >> 8) & 0x03; }
+uint8_t getTankBullets(const object_t *tank) { return (tank->c >> 8) & 0x07; }
+uint8_t getTankHomings(const object_t *tank) { return (tank->c >> 11) & 0x07; }

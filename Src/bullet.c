@@ -1,21 +1,20 @@
-/*
- * bullet.c
- *
- *  Created on: 20. jan. 2026
- *      Author: adambenali
- */
 #include "bullet.h"
-#include "movement.h"
+#define bulletUpLeft 0
+#define bulletUp 1
+#define bulletUpRight 2
+#define bulletLeft 3
+#define bulletRight 4
+#define bulletDownLeft 5
+#define bulletDown 6
+#define bulletDownRight 7
 
-void shootBullet(object_t player, object_t *objecthandler, uint8_t direction, uint8_t bullettype){
+void shootBullet(object_t player, object_t *objecthandler, uint8_t direction){
 	uint8_t i = 0;
 	for (; i<64;i++){
 		if(objecthandler->type == empty) break;
 	}
 
 	objecthandler[i].type = bullet;
-	objecthandler[i].c = bullettype; //bullettype: 0 -> homing -- 1 -> normal -- +2 -> ricochet (number of bounces = bullettype - 1)
-
 	switch (direction){
 		case bulletUpLeft:
 			objecthandler[i].position_x = player.position_x - TANK_WIDTH;
@@ -67,30 +66,25 @@ void shootBullet(object_t player, object_t *objecthandler, uint8_t direction, ui
 			break;
 	}
 	//normalize diagonals
-	if (objecthandler[i].a != 0 && objecthandler[i].b != 0){
+	if (objecthandler[i].a =! 0 && objecthandler[i].b =! 0){
 		objecthandler[i].position_x = (objecthandler[i].position_x*DIAG_SCALE) >> FP_SCALE;
 		objecthandler[i].position_y = (objecthandler[i].position_y*DIAG_SCALE) >> FP_SCALE;
 		objecthandler[i].a = (objecthandler[i].a*DIAG_SCALE) >> FP_SCALE;
 		objecthandler[i].b = (objecthandler[i].b*DIAG_SCALE) >> FP_SCALE;
 	}
-	objecthandler[i].a *= 2;
-	objecthandler[i].b *= 2;
 }
 
 void updateBullet(object_t bullet, object_t *objecthandler, World world){
 	int32_t tmpX = bullet.position_x;
 	int32_t tmpY = bullet.position_y;
-	Point oldPos = {0};
 
 	for (uint8_t i; i < 64; i++){
 		if (objecthandler[i].type != player || objecthandler[i].type != enemy) continue;
-		if (objecthandler[i].type == enemy && HitboxOverlap(getTankHitbox(objecthandler[i]),getBulletHitbox(bullet))){
-			oldPos.x = objecthandler[i].position_x >> FP_SCALE;
-			oldPos.y = objecthandler[i].position_y >> FP_SCALE;
-			eraseTankSelective(oldPos, objecthandler[i], selectTankSprite((objecthandler[i].c & (0x07 << 4)) >> 4));
+		if (objecthandler[i].type == enemy && "enemycollion"){
+			//Add erase enemy function
 			objecthandler[i].type = empty;
 		}
-		if (objecthandler[i].type == player && HitboxOverlap(getTankHitbox(objecthandler[i]),getBulletHitbox(bullet))){
+		if (objecthandler[i].type == enemy && "playercollion"){
 			//Add erase player function
 			objecthandler[i].type = empty;
 		}
@@ -100,49 +94,37 @@ void updateBullet(object_t bullet, object_t *objecthandler, World world){
 		return;
 	}
 
-		if(bullet.c > 1){
-			switch (checkWallCollisionAABB(bullet, &world)){
-			case COLLISION_LEFT:
+	if("wall collision"){
+		if("reco bullet"){
+			switch (0){
+			case HORZ:
 				bullet.a = -bullet.a;
-				bullet.c--;
-				break;
-			case COLLISION_RIGHT:
-				bullet.a = -bullet.a;
-				bullet.c--;
-				break;
-			case COLLISION_TOP:
+			case VERT:
 				bullet.b = -bullet.b;
-				bullet.c--;
-				break;
-			case COLLISION_BOTTOM:
-				bullet.b = -bullet.b;
-				bullet.c--;
-				break;
-			case COLLISION_NONE:
-				break;
 			}
-		} else if(checkWallCollisionAABB(bullet, &world) != COLLISION_NONE){
+		} else {
 			gotoxy(tmpX, tmpY);
 			printf("%c", 32);
 			bullet.type = empty;
 			return;
 		}
+	}
 
-	if (bullet.c == 0){
+	if ("homing bullet"){
 		for (uint8_t i; i < 64; i++){
 			if (objecthandler[i].type != enemy) continue;
-			if ((bullet.position_x < objecthandler[i].position_x && bullet.position_x > objecthandler[i].position_x - DISTANCE*TANK_WIDTH)
-				||(bullet.position_x > objecthandler[i].position_x && bullet.position_x < objecthandler[i].position_x + DISTANCE*TANK_WIDTH)
-				||(bullet.position_y < objecthandler[i].position_y && bullet.position_x > objecthandler[i].position_y - DISTANCE*TANK_HEIGHT)
-				||(bullet.position_y > objecthandler[i].position_y && bullet.position_x < objecthandler[i].position_y + DISTANCE*TANK_HEIGHT)){
+			if ((bullet.position_x < objecthandler[i].position_x && bullet.position_x > objecthandler[i].position_x - DISTANCE)
+				||(bullet.position_x > objecthandler[i].position_x && bullet.position_x < objecthandler[i].position_x + DISTANCE)
+				||(bullet.position_y < objecthandler[i].position_y && bullet.position_x > objecthandler[i].position_y - DISTANCE)
+				||(bullet.position_y > objecthandler[i].position_y && bullet.position_x < objecthandler[i].position_y + DISTANCE)){
 				//test algorithm
-				bullet.a += (GRAVITY/(objecthandler[i].position_x - bullet.position_x) << FP_SCALE);
-				bullet.b += (GRAVITY/(objecthandler[i].position_y - bullet.position_y) << FP_SCALE);
+				bullet.a += ((objecthandler[i].position_x - bullet.position_x) >> 0);
+				bullet.b += ((objecthandler[i].position_y - bullet.position_y) >> 0);
 			}
 		}
 	}
-	bullet.position_x += bullet.a >> FP_SCALE;
-	bullet.position_y += bullet.b >> FP_SCALE;
+	bullet.position_x += bullet.a;
+	bullet.position_y += bullet.b;
 	gotoxy(tmpX, tmpY);
 	printf("%c", 32);
 	gotoxy(bullet.position_x, bullet.position_y);

@@ -50,4 +50,5 @@ const char *getStar3(void);
 const char *getStar4(void);
 
 const char *getController(void);
+const char *getKeyboard(void);
 #endif

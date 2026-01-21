@@ -93,12 +93,21 @@ static void drawMultiplayerMenu(void) {
 static void drawHighscoresMenu(void) {
     clrscr();
     printCp850At(76, 5, getTitleArt());
-    printCp850At(69, 25, getController());
-    printCp850At(BACK_BUTTON_X, BACK_BUTTON_Y, getBack());
-    gotoxy(30, 67);
+
+    gotoxy(10, 20);
+    fgcolor(10);
+    printf("Player 1");
+    printCp850At(10, 25, getController());
+    gotoxy(20, 20);
+    fgcolor(12);
+    printf("Player 2");
+    printCp850At(130, 17, getKeyboard());
+    gotoxy(40, 67);
     fgcolor(13);
     printf("CENTER = Go back");
     fgcolor(15);
+
+    printCp850At(BACK_BUTTON_X, BACK_BUTTON_Y, getBack());
 }
 
 // Menu Item Helpers

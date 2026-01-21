@@ -117,7 +117,9 @@ void level3(void) {
 
           initTank(&objecthandler[0]);
           push_info_lcd(&objecthandler[0]);
-          initAITank(&objecthandler[1]);    // enemy 1
+          initAITank(&objecthandler[1], 200, 10);  // enemy 1
+          initAITank(&objecthandler[2], 220, 35);  // enemy 2
+          initAITank(&objecthandler[3], 210, 65);  // enemy 3
 
           while (1) {
                 if (tankUpdateDue()) {

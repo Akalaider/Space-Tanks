@@ -90,7 +90,10 @@ void level2(void) {
 
        initTank(&objecthandler[0]);
        push_info_lcd(&objecthandler[0]);
-       initAITank(&objecthandler[1]);    // enemy 1
+
+       initAITank(&objecthandler[1], 200, 10);  // enemy 1
+       initAITank(&objecthandler[2], 200, 50);  // enemy 2
+
 
 
        while (1) {

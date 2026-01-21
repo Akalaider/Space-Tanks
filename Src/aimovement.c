@@ -1,18 +1,18 @@
 #include "movement.h"
 #include "aimovement.h"
 
-void initAITank(object_t *ai)
+void initAITank(object_t *ai, int16_t x, int16_t y)
 {
     ai->type       = enemy;
-    ai->position_x = 200 << FP_SCALE;
-    ai->position_y = 10  << FP_SCALE;
+    ai->position_x = x << FP_SCALE;
+    ai->position_y = y << FP_SCALE;
 
     ai->a = TANK_WIDTH;
     ai->b = TANK_HEIGHT;
 
     ai->c = 0;
-    ai->c |= (AI_DIRECT);      // bit 0–1 = AI state
-    ai->c |= (0 << 4);         // spriteIndex = 0
+    ai->c |= AI_DIRECT;      // bit 0–1 = AI state
+    ai->c |= (4 << 4);       // spriteIndex = 4 (ned)
 
     const char *sprite = selectTankSprite(4); // ned
     drawTank(*ai, sprite);

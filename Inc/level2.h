@@ -4,4 +4,4 @@
 #include "movement.h"
 #include "io.h"
 #include "info_lines.h"
-void level2(void);
+uint8_t level2(void);

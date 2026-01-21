@@ -6,7 +6,7 @@
 #include "timer.h"
 #include "art.h"
 
-
+static object_t playerTank;
 
 struct Star {
     Point pos;
@@ -41,8 +41,9 @@ static uint8_t starOverlap(Point tankPos, struct Star s) {
 }
 
 
-void level2(void) {
+uint8_t level2(void) {
 
+    initTank(&playerTank);
     clrscr();
 
     // Ydre væg
@@ -85,26 +86,14 @@ void level2(void) {
     setTankUpdateInterval(50); // 100 Hz
 
     // Game loop
-    object_t objecthandler[OBJECTHANDLER_SIZE];
-       initObjecthandler(objecthandler);
+    while (1) {
+        if (tankUpdateDue()) {
 
-       initTank(&objecthandler[0]);
-       push_info_lcd(&objecthandler[0]);
-
-       initAITank(&objecthandler[1], 200, 10);  // enemy 1
-       initAITank(&objecthandler[2], 200, 50);  // enemy 2
-
-
-
-       while (1) {
-           if (tankUpdateDue()) {
-               updateObject(objecthandler, &world);
-           }
-
+            // controlTank(&world, &playerTank);
 
             Point tankPos = {
-                getTankX(&objecthandler[0]),
-                getTankY(&objecthandler[0])
+                getTankX(&playerTank),
+                getTankY(&playerTank)
             };
 
             // Restore stjerner
@@ -115,6 +104,6 @@ void level2(void) {
                     fgcolor(15);
                 }
             }
-      }
+        }
+    }
 }
-

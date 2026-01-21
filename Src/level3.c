@@ -5,8 +5,7 @@
 #include "movement.h"
 #include "io.h"
 #include "timer.h"
-#include "art.h"
-
+static object_t playerTank;
 
 struct Star {
     Point pos;
@@ -16,20 +15,20 @@ struct Star {
 
 // Liste af stjerner i level 1
 static struct Star stars[] = {
-    { { 40, 17 },  { 5, 3 }, getStar1 },
-    { { 200, 50 }, { 8, 5 }, getStar2 },
-    { { 120, 37 }, { 3, 3 }, getStar3 },
-    { { 140, 42 }, { 10, 7 }, getStar4 },
-	{ { 190, 10 }, { 5, 3 }, getStar1 },
-	{ { 20, 44 }, { 3, 3 }, getStar3 },
-	{ { 15, 30 }, { 10, 7 }, getStar4 },
-	{ { 90, 7 }, { 8, 5 }, getStar2 },
-	{ { 75, 46 },  { 5, 3 }, getStar1 },
-	{ { 105, 55 }, { 3, 3 }, getStar3 },
-	{ { 163, 30 },  { 5, 3 }, getStar1 },
-	{ { 67, 60 }, { 8, 5 }, getStar2 },
-	{ { 80, 33 },  { 5, 3 }, getStar1 },
-	{ { 135, 20 }, { 8, 5 }, getStar2 },
+    { { 5, 10 },  { 5, 3 }, getStar1 },
+    { { 20, 15 }, { 8, 5 }, getStar2 },
+    { { 50, 40 }, { 3, 3 }, getStar3 },
+    { { 135, 35 }, { 10, 7 }, getStar4 },
+	{ { 90, 30 }, { 5, 3 }, getStar1 },
+	{ { 200, 60 }, { 3, 3 }, getStar3 },
+	{ { 15, 55 }, { 10, 7 }, getStar4 },
+	{ { 140, 47 }, { 8, 5 }, getStar2 },
+	{ { 180, 15 },  { 5, 3 }, getStar1 },
+	{ { 170, 45 }, { 3, 3 }, getStar3 },
+	{ { 120, 62 },  { 5, 3 }, getStar1 },
+	{ { 85, 20 }, { 8, 5 }, getStar2 },
+	{ { 110, 12 },  { 5, 3 }, getStar1 },
+	{ { 160, 15 }, { 8, 5 }, getStar2 },
 
 };
 static const uint8_t starCount = sizeof(stars) / sizeof(stars[0]);
@@ -43,8 +42,8 @@ static uint8_t starOverlap(Point tankPos, struct Star s) {
 
 
 //ai_t enemy1;
-void level3(void) {
-
+uint8_t level3(void) {
+	initTank(&playerTank);
 
     clrscr();
 
@@ -60,7 +59,7 @@ void level3(void) {
     Point innerWall1[] = {
         {25, 20}, {25, 10}, {85, 10}
     };
-    drawWalls(innerWall1, 3, 0, &world);
+    drawWalls(innerWall1, 6, 0, &world);
 
     Point innerWall2[] = {
     		{105, 10}, {105, 40},
@@ -109,36 +108,32 @@ void level3(void) {
     drawObstacle((Point){177, 14}, getAsteroid(), 21, 7, &world);
 
 
+
+    object_t player;
+
+    initTank(&player);
+
     setTankUpdateInterval(50); // 10 ms → 100 Hz
 
     // Game loop
-       object_t objecthandler[OBJECTHANDLER_SIZE];
-          initObjecthandler(objecthandler);
+    while (1) {
+          if (tankUpdateDue()) {
 
-          initTank(&objecthandler[0]);
-          push_info_lcd(&objecthandler[0]);
-          initAITank(&objecthandler[1], 200, 10);  // enemy 1
-          initAITank(&objecthandler[2], 220, 35);  // enemy 2
-          initAITank(&objecthandler[3], 210, 65);  // enemy 3
+            //   controlTank(&world, &playerTank);
 
-          while (1) {
-                if (tankUpdateDue()) {
-                   updateObject(objecthandler, &world);
-                }
+              Point tankPos = {
+              getTankX(&playerTank),
+              getTankY(&playerTank)
+              };
 
-
-                Point tankPos = {
-                getTankX(&objecthandler[0]),
-                getTankY(&objecthandler[0])
-                };
-
-                // Restore stjerner
-                for (uint8_t i = 0; i < starCount; i++) {
-                    if (!starOverlap(tankPos, stars[i])) {
+                    // Restore stjerner
+              for (uint8_t i = 0; i < starCount; i++) {
+                   if (!starOverlap(tankPos, stars[i])) {
                        fgcolor(11);
                        printCp850At(stars[i].pos.x, stars[i].pos.y, stars[i].sprite());
                        fgcolor(15);
-                    }
-                }
-          }
+                   }
+              }
+         }
+    }
 }

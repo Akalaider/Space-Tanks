@@ -5,4 +5,4 @@
 #include "io.h"
 #include "info_lines.h"
 
-void level1(void);
+uint8_t level1(void);

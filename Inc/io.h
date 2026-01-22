@@ -47,5 +47,5 @@ typedef struct {
 
 uint8_t joyPressed(JoyStateTracker *js, uint8_t mask);
 
-
+uint8_t readMenuInput(char *buf);
 #endif /* IO_H_ */

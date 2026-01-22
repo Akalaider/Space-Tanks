@@ -10,16 +10,31 @@ void showVictoryScreen(uint8_t level_num) {
     printf("All enemy tanks destroyed!");
     gotoxy(90, 24);
     printf("Press CENTER to continue");
-    
+
+    char buf[32];
+
     // Wait for release
-    while (readHat() & JOY_CENTER) {}
-    
+    while (1) {
+        readKeyboardBuffer(buf);
+        if (!(readMenuInput(buf) & JOY_CENTER))
+            break;
+    }
+
     // Wait for press
-    while (!(readHat() & JOY_CENTER)) {}
-    
+    while (1) {
+        readKeyboardBuffer(buf);
+        if (readMenuInput(buf) & JOY_CENTER)
+            break;
+    }
+
     // Wait for release again
-    while (readHat() & JOY_CENTER) {}
+    while (1) {
+        readKeyboardBuffer(buf);
+        if (!(readMenuInput(buf) & JOY_CENTER))
+            break;
+    }
 }
+
 
 uint8_t showPauseScreen(void) {
     gotoxy(109, 2);
@@ -57,19 +72,24 @@ void preLevelx(void) {
     gotoxy(30, 28);
     printf("Level %c", level);
     gotoxy(30, 30);
-    printf("Destroy all enemy space tanks, while maneuvering around asteroids and try to stay alive!");
-    gotoxy(30, 32);
-    printf("Collect powerups by flying over them, and advance to the next level when all enemies are destroyed!");
+    printf("Destroy all enemy space tanks...");
     gotoxy(30, 34);
     printf("Press CENTER to start!");
 
+    char buf[32];
+
     // Wait for release
-    while (readHat() & JOY_CENTER) {}
+    while (1) {
+        readKeyboardBuffer(buf);
+        if (!(readMenuInput(buf) & JOY_CENTER))
+            break;
+    }
 
     uint8_t lastJoy = 0;
 
     while (1) {
-        uint8_t joy = readHat();
+        readKeyboardBuffer(buf);
+        uint8_t joy = readMenuInput(buf);
         uint8_t newPress = joy & ~lastJoy;
 
         if (newPress & JOY_CENTER) {
@@ -83,18 +103,15 @@ void preLevelx(void) {
             }
 
             if (result == 2) {
-                // Pause -> Main Menu selected
-                level_num = 1;  // Reset to level 1
+                level_num = 1;
                 drawTitleScreen();
                 return;
             } else if (result == 1) {
-                // Win
                 showVictoryScreen(level_num);
-                if (level_num < 3) level_num++;   // advance
+                if (level_num < 3) level_num++;
                 preLevelx();
             } else {
-                // Loss (result == 0)
-                level_num = 1;  // restart from level 1
+                level_num = 1;
                 drawTitleScreen();
             }
 

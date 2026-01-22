@@ -163,3 +163,31 @@ void setLED(uint8_t RGB){
     if (RGB & 0x04) GPIOB->BSRR = (1 << (4 + 16));
     else GPIOB->BSRR = (1 << 4);
 }
+
+uint8_t readMenuInput(char *buf) {
+    // Keyboard pause
+    if (charInString(buf, 'p'))
+        return JOY_PAUSE;
+
+    // Read joystick
+    uint8_t j = readJoystick();
+
+    // Map joystick button → JOY_CENTER
+    // Button1 = PC10, Button2 = PC12
+    uint8_t b1 = (GPIOC->IDR & (1 << 10)) ? 1 : 0;
+    uint8_t b2 = (GPIOC->IDR & (1 << 12)) ? 1 : 0;
+
+    if (b1 || b2) {
+        j |= JOY_CENTER;   // inject center bit
+    }
+
+    if (j) return j;
+
+    // Read hat
+    uint8_t h = readHat();
+    if (h) return h;
+
+    // Keyboard arrows
+    return readKeysFromBuffer(buf);
+}
+

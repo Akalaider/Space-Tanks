@@ -19,7 +19,7 @@ void shootBullet(object_t *player, object_t *objecthandler, uint8_t direction, u
 
 	// Reset cooldown to 500 ms
 	player->c &= ~(0x3FF << 17);
-	player->c |= (500 << 17);
+	player->c |= (200 << 17);
 
 	uint8_t i = 0;
 	for (; i < 64; i++) {

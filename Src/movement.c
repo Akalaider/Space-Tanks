@@ -15,7 +15,7 @@ void initTank(object_t *tank)
     tank->b = TANK_HEIGHT;
 
     tank->c = 0;                 // clear all bits
-    tank->c |= HAT_CONTROL;      // control mode
+    tank->c |= JOYSTICK_CONTROL;      // control mode
     tank->c |= (3 << 2);         // health = 3
     tank->c |= (0 << 4);         // sprite index = 0
     tank->c |= (5 << 8);         // Set bullets to 5

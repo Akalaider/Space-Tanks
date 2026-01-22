@@ -108,8 +108,25 @@ void updateBullet(object_t *bullet, object_t *objecthandler, World *world){
 			if(HitboxOverlap(getTankHitbox(Normalizedobject),getBulletHitbox(localBullet))){
 				oldPos.x = objecthandler[i].position_x >> FP_SCALE;
 				oldPos.y = objecthandler[i].position_y >> FP_SCALE;
-				eraseTankSelective(oldPos, objecthandler[i], selectTankSprite((objecthandler[i].c & (0x07 << 4)) >> 4));
-				objecthandler[i].type = empty;
+				uint8_t health = getTankHealth(&objecthandler[i]); // Health
+				health--;
+				objecthandler[i].c &= ~(0x03 << 2);
+				objecthandler[i].c |= (health << 2);
+
+				if (health == 0) {
+					Point tankPos = {
+                		objecthandler[i].position_x >> FP_SCALE,
+                		objecthandler[i].position_y >> FP_SCALE
+            		};
+            
+					// Create an empty object for eraseTankSelective (nothing to overlap with)
+					object_t emptyTank;
+					emptyTank.position_x = -100 << FP_SCALE; // Offscreen position
+					emptyTank.position_y = -100 << FP_SCALE;
+					
+					eraseTankSelective(tankPos, emptyTank, "");
+					objecthandler[i].type = empty; // Mark player as dead
+				}
 
 				gotoxy(tmpX >> FP_SCALE, tmpY >> FP_SCALE);
 				printf("%c", 32);
@@ -123,6 +140,8 @@ void updateBullet(object_t *bullet, object_t *objecthandler, World *world){
 			Normalizedobject.position_y = Normalizedobject.position_y >> FP_SCALE;
 			if (HitboxOverlap(getTankHitbox(Normalizedobject),getBulletHitbox(localBullet))){
 				//Add erase player function
+
+
 				uint8_t health = getTankHealth(&objecthandler[i]); // Health
 				health--;
 				objecthandler[i].c &= ~(0x03 << 2);

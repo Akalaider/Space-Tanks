@@ -19,7 +19,7 @@
 #define bulletDownLeft 5
 #define bulletDown 4
 #define bulletDownRight 3
-#define GRAVITY 50
+#define GRAVITY 10000
 #define DISTANCE 2
 
 

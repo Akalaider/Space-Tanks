@@ -32,6 +32,7 @@ void shootBullet(object_t *player, object_t *objecthandler, uint8_t direction, u
 
 	objecthandler[i].type = bullet;
 	objecthandler[i].c = bullettype; //bullettype: 0 -> homing -- 1 -> normal -- +2 -> ricochet (number of bounces = bullettype - 1)
+	objecthandler[i].c |= 0 << 20; //if homing bullet then it picks a target
 
 	switch (direction){
 		case bulletUpLeft:
@@ -187,15 +188,38 @@ void updateBullet(object_t *bullet, object_t *objecthandler, World *world){
 		}
 
 	if (bullet->c == 0){
-		for (uint8_t i; i < 64; i++){
+		int32_t prevRSquare = 0xFFFFFFFF;
+		int32_t rSquare;
+		int8_t target;
+		for (uint8_t i = 0; i < 64; i++){
 			if (objecthandler[i].type != enemy) continue;
-			if ((bullet->position_x < objecthandler[i].position_x && bullet->position_x > objecthandler[i].position_x - DISTANCE*TANK_WIDTH)
-				||(bullet->position_x > objecthandler[i].position_x && bullet->position_x < objecthandler[i].position_x + DISTANCE*TANK_WIDTH)
-				||(bullet->position_y < objecthandler[i].position_y && bullet->position_x > objecthandler[i].position_y - DISTANCE*TANK_HEIGHT)
-				||(bullet->position_y > objecthandler[i].position_y && bullet->position_x < objecthandler[i].position_y + DISTANCE*TANK_HEIGHT)){
-				//test algorithm
-				bullet->a += (GRAVITY/(objecthandler[i].position_x - bullet->position_x));
-				bullet->b += (GRAVITY/(objecthandler[i].position_y - bullet->position_y));
+			if (bullet->c >> 20 == 0){
+				gotoxy(10,10);
+				printf("has no target %d", i);
+			} else {
+				gotoxy(10,11);
+				printf("target is %d", i);
+			}
+			if ((bullet->c != (i >> 20)) && ((bullet->c >> 20) != 0)) continue;
+
+			rSquare = ((objecthandler[i].position_x - bullet->position_x) >> FP_SCALE)*((objecthandler[i].position_x - bullet->position_x) >> FP_SCALE)
+					+ ((objecthandler[i].position_y - bullet->position_y) >> FP_SCALE)*((objecthandler[i].position_y - bullet->position_y) >> FP_SCALE);
+
+			if(bullet->c >> 20 == 0){
+				if (prevRSquare > rSquare){
+					prevRSquare = rSquare;
+					target = i;
+					if(i != 63) continue;
+					bullet->c |= target << 20;
+					break;
+				}
+			}
+
+			bullet->a += (GRAVITY * ((objecthandler[i].position_x - bullet->position_x) >> FP_SCALE))/rSquare;
+			bullet->b += (GRAVITY * ((objecthandler[i].position_y - bullet->position_y) >> FP_SCALE))/rSquare;
+			while(bullet->a > 1000 || bullet->b > 1000){
+				bullet->a = bullet->a >> 2;
+				bullet->b = bullet->b >> 2;
 			}
 		}
 	}

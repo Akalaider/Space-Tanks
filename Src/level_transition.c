@@ -1,5 +1,26 @@
 #include "level_transition.h"
 
+void showVictoryScreen(uint8_t level_num) {
+    fgcolor(11);
+    printCp850At(90, 15, getVictory());
+    fgcolor(15);
+    gotoxy(90, 22);
+    printf("Level %d Complete!", level_num);
+    gotoxy(110, 22);
+    printf("All enemy tanks destroyed!");
+    gotoxy(90, 24);
+    printf("Press CENTER to continue");
+    
+    // Wait for release
+    while (readJoystick() & JOY_CENTER) {}
+    
+    // Wait for press
+    while (!(readJoystick() & JOY_CENTER)) {}
+    
+    // Wait for release again
+    while (readJoystick() & JOY_CENTER) {}
+}
+
 void preLevelx(void) {
     static uint8_t level_num = 1;
 
@@ -36,9 +57,11 @@ void preLevelx(void) {
             }
 
             if (beaten) {
+                showVictoryScreen(level_num);
                 if (level_num < 3) level_num++;   // advance
                 preLevelx();
             } else {
+
                 level_num = 1;                    // restart from level 1
                 preLevelx();
             }

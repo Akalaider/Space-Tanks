@@ -3,8 +3,7 @@
 #include "ansi.h"
 #include "art.h"
 #include "level1.h"
-#include "level2.h"
-#include "level3.h"
 #include "io.h"
 
+void showVictoryScreen(uint8_t level_num);
 void preLevelx(void);

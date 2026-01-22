@@ -96,9 +96,22 @@ uint8_t level1(void) {
 
     char buf[32];
     // Game loop
+
+    uint8_t lastJoy = 0;  // Track previous joystick state
+    
     while (1) {
         readKeyboardBuffer(buf);
         uint8_t joy = readController(&objecthandler[0], buf);
+        
+        // Detect new press only (rising edge detection)
+        uint8_t newPress = joy & ~lastJoy;
+        
+        if (newPress & JOY_PAUSE) {
+            stTimer();              // toggle timer on/off
+            buf[0] = '\0'; // Clear buffer after toggle
+        }
+        
+        lastJoy = joy;  // Update BEFORE tankUpdateDue check
         
         if (tankUpdateDue()) {
             updateObject(objecthandler, &world, buf);
@@ -111,9 +124,7 @@ uint8_t level1(void) {
                 return 1;
             }
         }
-        if (joy & JOY_PAUSE) {
-            stTimer();              // toggle timer on/off
-        }
+        
         // Point tankPos = {
         //     getTankX(&objecthandler[0]),
         //     getTankY(&objecthandler[0])
@@ -127,6 +138,7 @@ uint8_t level1(void) {
         // }
     }
 }
+
 
 
 
@@ -211,12 +223,23 @@ uint8_t level2(void) {
     setTankUpdateInterval(50); // 10 ms → 100 Hz
     char buf[32];
 
-    // Game loop
+    uint8_t lastJoy = 0;  // Track previous joystick state
+    
     while (1) {
         readKeyboardBuffer(buf);
         uint8_t joy = readController(&objecthandler[0], buf);
         
-    	if (tankUpdateDue()) {
+        // Detect new press only (rising edge detection)
+        uint8_t newPress = joy & ~lastJoy;
+        
+        if (newPress & JOY_PAUSE) {
+            stTimer();              // toggle timer on/off
+            buf[0] = '\0'; // Clear buffer after toggle
+        }
+        
+        lastJoy = joy;  // Update BEFORE tankUpdateDue check
+        
+        if (tankUpdateDue()) {
             updateObject(objecthandler, &world, buf);
             // Loss
             if (playerIsDead(objecthandler)) {
@@ -227,9 +250,18 @@ uint8_t level2(void) {
                 return 1;
             }
         }
-        if (joy & JOY_PAUSE) {
-            stTimer();              // toggle timer on/off
-        }
+        
+        // Point tankPos = {
+        //     getTankX(&objecthandler[0]),
+        //     getTankY(&objecthandler[0])
+        // };
+        // for (uint8_t i = 0; i < starCount; i++) {
+        //     if (!starOverlap(tankPos, stars[i])) {
+        //         fgcolor(11);
+        //         printCp850At(stars[i].pos.x, stars[i].pos.y, stars[i].sprite());
+        //         fgcolor(15);
+        //     }
+        // }
     }
 }
 
@@ -342,11 +374,23 @@ uint8_t level3(void) {
     // Game loop
     char buf[32];
 
+    uint8_t lastJoy = 0;  // Track previous joystick state
+    
     while (1) {
         readKeyboardBuffer(buf);
         uint8_t joy = readController(&objecthandler[0], buf);
         
-    	if (tankUpdateDue()) {
+        // Detect new press only (rising edge detection)
+        uint8_t newPress = joy & ~lastJoy;
+        
+        if (newPress & JOY_PAUSE) {
+            stTimer();              // toggle timer on/off
+            buf[0] = '\0'; // Clear buffer after toggle
+        }
+        
+        lastJoy = joy;  // Update BEFORE tankUpdateDue check
+        
+        if (tankUpdateDue()) {
             updateObject(objecthandler, &world, buf);
             // Loss
             if (playerIsDead(objecthandler)) {
@@ -357,22 +401,18 @@ uint8_t level3(void) {
                 return 1;
             }
         }
-        if (joy & JOY_PAUSE) {
-            stTimer();              // toggle timer on/off
-        }
-              Point tankPos = {
-              getTankX(&objecthandler[0]),
-              getTankY(&objecthandler[0])
-              };
-
-                    // Restore stjerner
-              for (uint8_t i = 0; i < starCount3; i++) {
-                   if (!starOverlap3(tankPos, stars3[i])) {
-                       fgcolor(11);
-                       printCp850At(stars3[i].pos.x, stars3[i].pos.y, stars3[i].sprite());
-                       fgcolor(15);
-                   }
-              }
-         }
+        
+        // Point tankPos = {
+        //     getTankX(&objecthandler[0]),
+        //     getTankY(&objecthandler[0])
+        // };
+        // for (uint8_t i = 0; i < starCount; i++) {
+        //     if (!starOverlap(tankPos, stars[i])) {
+        //         fgcolor(11);
+        //         printCp850At(stars[i].pos.x, stars[i].pos.y, stars[i].sprite());
+        //         fgcolor(15);
+        //     }
+        // }
+    }
     }
 

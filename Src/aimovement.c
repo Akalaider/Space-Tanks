@@ -12,7 +12,8 @@ void initAITank(object_t *ai, int16_t x, int16_t y)
 
     ai->c = 0;
     ai->c |= AI_DIRECT;      // bit 0–1 = AI state
-    ai->c |= (4 << 4);       // spriteIndex = 4 (ned)
+    ai->c |= (0 << 4);       // (spriteIndex = 4 (ned))
+    ai->c |= (3 << 2);       // health = 3
 
     const char *sprite = selectTankSprite(4); // ned
     drawTank(*ai, sprite);

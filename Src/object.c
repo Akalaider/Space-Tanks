@@ -31,7 +31,8 @@ void updateObject(object_t* objecthandler, World* world){
 			case empty:
 				break;
 			case bullet:
-				updateBullet(&objecthandler[i],&objecthandler, world);
+				gotoxy(10, 5);
+				updateBullet(&objecthandler[i],objecthandler, world);
 				break;
 			case player:
 				controlTank(objecthandler, world, &objecthandler[i]);

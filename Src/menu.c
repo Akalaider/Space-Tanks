@@ -6,17 +6,6 @@
 #include "io.h"
 #include "level1.h"
 
-typedef enum {
-    MENU_MAIN = 0,
-    MENU_GAMEMODE_LEFT = 1,
-    MENU_GAMEMODE_RIGHT = 2,
-    MENU_GAMEMODE_BACK = 3,
-    MENU_HIGHSCORES = 4,
-    MENU_MULTIPLAYER_LEFT = 5,
-    MENU_MULTIPLAYER_RIGHT = 6,
-    MENU_MULTIPLAYER_BACK = 7,
-} MenuState;
-
 typedef struct {
     uint8_t x;
     uint8_t y;
@@ -300,7 +289,8 @@ static void handleGamemodeMenuInput(BlinkController *b, uint8_t joyState,
     // Select singleplayer
     if ((joyState & JOY_CENTER) && b->x == GAMEMODE_MENU_LEFT_X) {
         timer_detachBlink(b);
-        level1();
+        *currentMenu = MENU_START_SINGLEPLAYER;
+        return;
     }
     
     // Navigate right to multiplayer
@@ -455,7 +445,7 @@ static MenuItem getCurrentMenuItem(MenuState currentMenu) {
     }
 }
 
-void drawTitleScreen(void) {  
+MenuState drawTitleScreen(void) {  
     // Initialize menu state
     MenuState currentMenu = MENU_MAIN;
     MenuItem currentItem = getMainMenuItem();
@@ -519,5 +509,9 @@ void drawTitleScreen(void) {
         }
 
         lastJoyState = joyState;
+
+        if (currentMenu == MENU_START_SINGLEPLAYER) { 
+            return MENU_START_SINGLEPLAYER;
+        }
     }
 }

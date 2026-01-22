@@ -35,5 +35,11 @@ int main(void)
     lcd_update(lcd_buffer);
 
     // Start menu
-    drawTitleScreen();
+    while (1) {
+        MenuState result = drawTitleScreen();
+
+        if (result == MENU_START_SINGLEPLAYER) {
+            preLevelx();
+        }
+    }
 }

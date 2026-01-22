@@ -131,7 +131,7 @@ void setupLED(){
 	setLED(0b000);
 }
 
-void setLED(uint8_t RGB){
+/*void setLED(uint8_t RGB){
 	if(0x1 & RGB){
 		GPIOA->ODR &= (0x0000 << 9);
 	} else {
@@ -149,4 +149,17 @@ void setLED(uint8_t RGB){
 	} else {
 		GPIOB->ODR |= (0x0001 << 4);
 	}
+}*/
+void setLED(uint8_t RGB){
+    // BLÅ = PA9
+    if (RGB & 0x01) GPIOA->BSRR = (1 << (9 + 16));// reset bit (tænd)
+    else GPIOA->BSRR = (1 << 9);// set bit (sluk)
+
+    // GRØN = PC7
+    if (RGB & 0x02) GPIOC->BSRR = (1 << (7 + 16));
+    else GPIOC->BSRR = (1 << 7);
+
+    // RØD = PB4
+    if (RGB & 0x04) GPIOB->BSRR = (1 << (4 + 16));
+    else GPIOB->BSRR = (1 << 4);
 }

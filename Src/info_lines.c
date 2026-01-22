@@ -1,6 +1,7 @@
 #include "info_lines.h"
 #include "movement.h"
 #include "object.h"
+#include "io.h"
 
 void push_info_lcd(const object_t *player) { 
     uint8_t heart_count = getTankHealth(player);
@@ -44,6 +45,14 @@ void push_info_lcd(const object_t *player) {
     snprintf(line2, sizeof(line2), "%s", hearts);
     snprintf(line3, sizeof(line3), "%s", " Level 1");
     
+    // Set LED color based on health
+    switch (heart_count) {
+        case 3: setLED(0b010); break; // grøn
+        case 2: setLED(0b101); break; // lilla (rød + blå)
+        case 1: setLED(0b100); break; // rød
+        default: setLED(0b000); break; // slukket
+    }
+
     lcd_write_string(lcd_buffer, line0, 0);
     lcd_write_string(lcd_buffer, line1, 1);
     lcd_write_string(lcd_buffer, line2, 2);

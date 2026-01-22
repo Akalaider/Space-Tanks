@@ -469,10 +469,11 @@ MenuState drawTitleScreen(void) {
     uint8_t lastJoyState = 0;
     
     while (1) {
-        uint8_t joyState = readJoystick();
-        setLED(joyState);
-        
-        // Update menu item if menu changed
+        char buf[32]; 
+        readKeyboardBuffer(buf); 
+        uint8_t joyState = readMenuInput(buf); // joystick + hat + keyboard 
+        setLED(joyState); 
+        // Update menu item if menu changed 
         MenuItem newItem = getCurrentMenuItem(currentMenu);
         if (newItem.cursor != currentItem.cursor || newItem.blankCursor != currentItem.blankCursor) {
             currentItem = newItem;

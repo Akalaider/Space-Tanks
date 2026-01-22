@@ -10,16 +10,57 @@ void showVictoryScreen(uint8_t level_num) {
     printf("All enemy tanks destroyed!");
     gotoxy(90, 24);
     printf("Press CENTER to continue");
-    
+
+    char buf[32];
+
     // Wait for release
-    while (readJoystick() & JOY_CENTER) {}
-    
+    while (1) {
+        readKeyboardBuffer(buf);
+        if (!(readMenuInput(buf) & JOY_CENTER))
+            break;
+    }
+
     // Wait for press
-    while (!(readJoystick() & JOY_CENTER)) {}
-    
+    while (1) {
+        readKeyboardBuffer(buf);
+        if (readMenuInput(buf) & JOY_CENTER)
+            break;
+    }
+
     // Wait for release again
-    while (readJoystick() & JOY_CENTER) {}
+    while (1) {
+        readKeyboardBuffer(buf);
+        if (!(readMenuInput(buf) & JOY_CENTER))
+            break;
+    }
 }
+
+
+uint8_t showPauseScreen(void) {
+    gotoxy(109, 2);
+    printf("GAME PAUSED");
+    gotoxy(95, 3);
+    printf("P:   Continue        R:   Main Menu");
+
+    char buf[32];
+
+    while (1) {
+        readKeyboardBuffer(buf);
+
+        if (buf[0] == 'p' || buf[0] == 'P') {
+            gotoxy(109, 2);
+            printf("           ");
+            gotoxy(95, 3);
+            printf("P:   Pause                         ");
+            return 1;   // Continue
+        }
+
+        if (buf[0] == 'r' || buf[0] == 'R') {
+            return 0;   // Main menu
+        }
+    }
+}
+
 
 void preLevelx(void) {
     static uint8_t level_num = 1;
@@ -31,40 +72,47 @@ void preLevelx(void) {
     gotoxy(30, 28);
     printf("Level %c", level);
     gotoxy(30, 30);
-    printf("Destroy all enemy space tanks, while maneuvering around asteroids and try to stay alive!");
-    gotoxy(30, 32);
-    printf("Collect powerups by flying over them, and advance to the next level when all enemies are destroyed!");
+    printf("Destroy all enemy space tanks...");
     gotoxy(30, 34);
     printf("Press CENTER to start!");
 
+    char buf[32];
+
     // Wait for release
-    while (readJoystick() & JOY_CENTER) {}
+    while (1) {
+        readKeyboardBuffer(buf);
+        if (!(readMenuInput(buf) & JOY_CENTER))
+            break;
+    }
 
     uint8_t lastJoy = 0;
 
     while (1) {
-        uint8_t joy = readJoystick();
+        readKeyboardBuffer(buf);
+        uint8_t joy = readMenuInput(buf);
         uint8_t newPress = joy & ~lastJoy;
 
         if (newPress & JOY_CENTER) {
 
-            uint8_t beaten = 0;
+            uint8_t result = 0;
 
             switch (level_num) {
-                case 1: beaten = level1(); break;
-                case 2: beaten = level2(); break;
-                case 3: beaten = level3(); break;
+                case 1: result = level1(); break;
+                case 2: result = level2(); break;
+                case 3: result = level3(); break;
             }
 
-            if (beaten) {
+            if (result == 2) {
+                level_num = 1;
+                drawTitleScreen();
+                return;
+            } else if (result == 1) {
                 showVictoryScreen(level_num);
-                if (level_num < 3) level_num++;   // advance
+                if (level_num < 3) level_num++;
                 preLevelx();
             } else {
-
-                level_num = 1;                    // restart from level 1
+                level_num = 1;
                 drawTitleScreen();
-                // preLevelx();
             }
 
             return;

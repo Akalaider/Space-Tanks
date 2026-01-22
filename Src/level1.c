@@ -45,6 +45,7 @@ static struct Star stars[] = {
 };
 
 static const uint8_t starCount = sizeof(stars) / sizeof(stars[0]);
+
 static uint8_t starOverlap(Point tankPos, struct Star s) {
     return !(tankPos.x + TANK_WIDTH  <= s.pos.x ||
              s.pos.x + s.size.x      <= tankPos.x ||
@@ -95,38 +96,38 @@ uint8_t level1(void) {
 
     char buf[32];
     // Game loop
+    
     while (1) {
         readKeyboardBuffer(buf);
-        uint8_t joy = readController(&objecthandler[0], buf);
-        
+
+        // Pause key pressed?
+        if (buf[0] == 'p' || buf[0] == 'P') {
+            stTimer();  // stop timer
+            buf[0] = '\0';
+
+            uint8_t choice = showPauseScreen();
+
+            if (choice == 0) {   // Return to main menu
+                stTimer();
+                drawTitleScreen();
+                return 2;
+            }
+
+            // Continue game
+            stTimer();  
+            buf[0] = '\0';
+        }
+
         if (tankUpdateDue()) {
             updateObject(objecthandler, &world, buf);
-            // Loss
-            if (playerIsDead(objecthandler)) {
-                return 0;
-            }
-            // Win
-             if (allEnemiesGone(objecthandler)) {
-                return 1;
-            }
-        }
-        if (joy & JOY_PAUSE) {
-            stTimer();              // toggle timer on/off
+
+            if (playerIsDead(objecthandler)) return 0;
+            if (allEnemiesGone(objecthandler)) return 1;
         }
     }
 
-    Point tankPos = {
-        getTankX(&objecthandler[0]),
-        getTankY(&objecthandler[0])
-    };
-    for (uint8_t i = 0; i < starCount; i++) {
-        if (!starOverlap(tankPos, stars[i])) {
-            fgcolor(11);
-            printCp850At(stars[i].pos.x, stars[i].pos.y, stars[i].sprite());
-            fgcolor(15);
-        }
-    }
 }
+
 
 
 
@@ -211,26 +212,34 @@ uint8_t level2(void) {
     setTankUpdateInterval(50); // 10 ms → 100 Hz
     char buf[32];
 
-    // Game loop
+    uint8_t lastJoy = 0;  // Track previous joystick state
+    
     while (1) {
-    	if (tankUpdateDue()) {
-    	            updateObject(objecthandler, &world, buf);{
-    	            }
-            // controlTank(&world, &playerTank);
+        readKeyboardBuffer(buf);
 
-            Point tankPos = {
-                getTankX(&objecthandler[0]),
-                getTankY(&objecthandler[0])
-            };
+        // Pause key pressed?
+        if (buf[0] == 'p' || buf[0] == 'P') {
+            stTimer();  // stop timer
+            buf[0] = '\0';
 
-            // Restore stjerner
-            for (uint8_t i = 0; i < starCount2; i++) {
-                if (!starOverlap2(tankPos, stars2[i])) {
-                    fgcolor(11);
-                    printCp850At(stars2[i].pos.x, stars2[i].pos.y, stars2[i].sprite());
-                    fgcolor(15);
-                }
+            uint8_t choice = showPauseScreen();
+
+            if (choice == 0) {   // Return to main menu
+                stTimer();
+                drawTitleScreen();
+                return 2;
             }
+
+            // Continue game
+            stTimer();  
+            buf[0] = '\0';
+        }
+
+        if (tankUpdateDue()) {
+            updateObject(objecthandler, &world, buf);
+
+            if (playerIsDead(objecthandler)) return 0;
+            if (allEnemiesGone(objecthandler)) return 1;
         }
     }
 }
@@ -344,26 +353,34 @@ uint8_t level3(void) {
     // Game loop
     char buf[32];
 
+    uint8_t lastJoy = 0;  // Track previous joystick state
+    
     while (1) {
-    	if (tankUpdateDue()) {
-    	            updateObject(objecthandler, &world, buf);
-    	}
+        readKeyboardBuffer(buf);
 
-            //   controlTank(&world, &playerTank);
+        // Pause key pressed?
+        if (buf[0] == 'p' || buf[0] == 'P') {
+            stTimer();  // stop timer
+            buf[0] = '\0';
 
-              Point tankPos = {
-              getTankX(&objecthandler[0]),
-              getTankY(&objecthandler[0])
-              };
+            uint8_t choice = showPauseScreen();
 
-                    // Restore stjerner
-              for (uint8_t i = 0; i < starCount3; i++) {
-                   if (!starOverlap3(tankPos, stars3[i])) {
-                       fgcolor(11);
-                       printCp850At(stars3[i].pos.x, stars3[i].pos.y, stars3[i].sprite());
-                       fgcolor(15);
-                   }
-              }
-         }
+            if (choice == 0) {   // Return to main menu
+                stTimer();
+                drawTitleScreen();
+                return 2;
+            }
+
+            // Continue game
+            stTimer();  
+            buf[0] = '\0';
+        }
+
+        if (tankUpdateDue()) {
+            updateObject(objecthandler, &world, buf);
+
+            if (playerIsDead(objecthandler)) return 0;
+            if (allEnemiesGone(objecthandler)) return 1;
+        }
     }
-
+}

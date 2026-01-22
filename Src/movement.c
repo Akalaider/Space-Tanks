@@ -15,7 +15,7 @@ void initTank(object_t *tank)
     tank->b = TANK_HEIGHT;
 
     tank->c = 0;                 // clear all bits
-    tank->c |= KEYBOARD_CONTROL;      // control mode
+    tank->c |= JOYSTICK_CONTROL;      // control mode
     tank->c |= (3 << 2);         // health = 3
     tank->c |= (0 << 4);         // sprite index = 0
     tank->c |= (5 << 8);         // Set bullets to 5
@@ -34,14 +34,15 @@ uint8_t readController(const object_t *tank, char *buf){
         return JOY_PAUSE;
 
     switch (tank->c & 0x03) {
-        case KEYBOARD_CONTROL:
-            return readKeysFromBuffer(buf);
-
-        case JOYSTICK_CONTROL:
-        case HAT_CONTROL:
-        default:
-            return readJoystick();
-    }
+		case JOYSTICK_CONTROL:
+			return readJoystick();
+		case KEYBOARD_CONTROL:
+			return readKeysFromBuffer(buf);
+		case HAT_CONTROL:
+			return readHat();
+		default:
+			return readHat();
+	}
 }
 
 
@@ -58,14 +59,15 @@ void controlTank(object_t *objecthandler, World *world, object_t *tank, char *bu
 
 
     // Note: Use index of sprite determine direction
-    if(joy & JOY_BUTTON1 || joy & JOY_CENTER){
+    if(joy & JOY_CENTER){
     	if((getTankPowerup(tank) & 1) == 0){
-    		gotoxy(10,10);
-    		printf("shoot");
     		shootBullet(tank, objecthandler, (tank->c & (0x07 << 4)) >> 4, 2);
     	} else {
     		shootBullet(tank, objecthandler, (tank->c & (0x07 << 4)) >> 4, 3);
     	}
+    }
+    if(joy & JOY_BUTTON1){
+        shootBullet(tank, objecthandler, (tank->c & (0x07 << 4)) >> 4, 0);
     }
 
     if (dx == 0 && dy == 0)

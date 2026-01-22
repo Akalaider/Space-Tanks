@@ -1,5 +1,6 @@
 #include "object.h"
 #include "world.h"
+#include "analogue.h"
 
 void initObjecthandler(object_t* objecthandler){
 	for(uint8_t i = 0; i < OBJECTHANDLER_SIZE; i++){

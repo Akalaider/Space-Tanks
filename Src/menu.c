@@ -469,7 +469,7 @@ MenuState drawTitleScreen(void) {
     uint8_t lastJoyState = 0;
     
     while (1) {
-        uint8_t joyState = readJoystick();
+        uint8_t joyState = readHat();
         setLED(joyState);
         
         // Update menu item if menu changed

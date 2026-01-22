@@ -10,7 +10,7 @@
 #define JOY_MASK 0x1F   // UP, DOWN, LEFT, RIGHT, CENTER
 
 uint8_t joyPressed(JoyStateTracker *js, uint8_t mask) { 
-    uint8_t now = readJoystick() & JOY_MASK; 
+    uint8_t now = readHat() & JOY_MASK; 
     
     // Active-low: 1 (released) -> 0 (pressed) 
     uint8_t pressed = (js->prev & ~now) & mask; 
@@ -77,7 +77,7 @@ void setupJoystick(){
 
 }
 
-int8_t readJoystick(){
+int8_t readHat(){
 	return 0x1F & (((GPIOA->IDR & (0x0001 << 4)) >> (-0+4))
 				| ((GPIOB->IDR & (0x0001 << 0)) << (1-0))
 				| ((GPIOC->IDR & (0x0001 << 1)) << (2-1))

@@ -12,14 +12,40 @@ void showVictoryScreen(uint8_t level_num) {
     printf("Press CENTER to continue");
     
     // Wait for release
-    while (readJoystick() & JOY_CENTER) {}
+    while (readHat() & JOY_CENTER) {}
     
     // Wait for press
-    while (!(readJoystick() & JOY_CENTER)) {}
+    while (!(readHat() & JOY_CENTER)) {}
     
     // Wait for release again
-    while (readJoystick() & JOY_CENTER) {}
+    while (readHat() & JOY_CENTER) {}
 }
+
+uint8_t showPauseScreen(void) {
+    gotoxy(109, 2);
+    printf("GAME PAUSED");
+    gotoxy(95, 3);
+    printf("P:   Continue        R:   Main Menu");
+
+    char buf[32];
+
+    while (1) {
+        readKeyboardBuffer(buf);
+
+        if (buf[0] == 'p' || buf[0] == 'P') {
+            gotoxy(109, 2);
+            printf("           ");
+            gotoxy(95, 3);
+            printf("P:   Pause                         ");
+            return 1;   // Continue
+        }
+
+        if (buf[0] == 'r' || buf[0] == 'R') {
+            return 0;   // Main menu
+        }
+    }
+}
+
 
 void preLevelx(void) {
     static uint8_t level_num = 1;
@@ -48,23 +74,28 @@ void preLevelx(void) {
 
         if (newPress & JOY_CENTER) {
 
-            uint8_t beaten = 0;
+            uint8_t result = 0;
 
             switch (level_num) {
-                case 1: beaten = level1(); break;
-                case 2: beaten = level2(); break;
-                case 3: beaten = level3(); break;
+                case 1: result = level1(); break;
+                case 2: result = level2(); break;
+                case 3: result = level3(); break;
             }
 
-            if (beaten) {
+            if (result == 2) {
+                // Pause -> Main Menu selected
+                level_num = 1;  // Reset to level 1
+                drawTitleScreen();
+                return;
+            } else if (result == 1) {
+                // Win
                 showVictoryScreen(level_num);
                 if (level_num < 3) level_num++;   // advance
                 preLevelx();
             } else {
-
-                level_num = 1;                    // restart from level 1
+                // Loss (result == 0)
+                level_num = 1;  // restart from level 1
                 drawTitleScreen();
-                // preLevelx();
             }
 
             return;

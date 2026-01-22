@@ -6,4 +6,5 @@
 #include "io.h"
 
 void showVictoryScreen(uint8_t level_num);
+uint8_t showPauseScreen(void);
 void preLevelx(void);

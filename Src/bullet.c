@@ -9,17 +9,10 @@
 #include "ansi.h"
 
 void shootBullet(object_t *player, object_t *objecthandler, uint8_t direction, uint8_t bullettype){
-	// if (getTankCooldown(player) != 0) return;
+	if (getTankCooldown(player) != 0) return;
 
 	// Check ammo
 	uint8_t bullets = getTankBullets(player);
-	if (bullets == 0){
-		gotoxy(10,11);
-		printf("has no bullets");
-		return; // no ammo
-	}
-	gotoxy(10,11);
-	printf("has bullets    ");
 	// Consume one bullet
 	player->c &= ~(0x07 << 8);
 	player->c |= ((bullets - 1) << 8);
@@ -92,14 +85,11 @@ void shootBullet(object_t *player, object_t *objecthandler, uint8_t direction, u
 	objecthandler[i].b *= 2;
 	int32_t tmpX = objecthandler[i].position_x >> FP_SCALE;
 	int32_t tmpY = objecthandler[i].position_y >> FP_SCALE;
-	if (objecthandler[i].type == bullet) {
-		gotoxy(10,12);
-		printf("type: bullet x: %d y: %d vx: %d vy: %d", tmpX + 1, tmpX - 1, tmpY + 1, tmpY - 1);
-	}
 }
 
 void updateBullet(object_t *bullet, object_t *objecthandler, World *world){
 	object_t localBullet;
+	object_t Normalizedobject;
 	localBullet.type = bullet->type;
 	localBullet.position_x = bullet->position_x >> FP_SCALE;
 	localBullet.position_y = bullet->position_y >> FP_SCALE;
@@ -110,31 +100,36 @@ void updateBullet(object_t *bullet, object_t *objecthandler, World *world){
 	int32_t tmpY = bullet->position_y;
 	Point oldPos = {0};
 
-	gotoxy(40, 5);
 	for (uint8_t i = 0; i < 64; i++){
-		if (objecthandler[i].type != player || objecthandler[i].type != enemy) continue;
-		if (objecthandler[i].type == enemy && HitboxOverlap(getTankHitbox(objecthandler[i]),getBulletHitbox(localBullet))){
-			printf("%d ", i);
-			oldPos.x = objecthandler[i].position_x >> FP_SCALE;
-			oldPos.y = objecthandler[i].position_y >> FP_SCALE;
-			eraseTankSelective(oldPos, objecthandler[i], selectTankSprite((objecthandler[i].c & (0x07 << 4)) >> 4));
-			objecthandler[i].type = empty;
+		if (objecthandler[i].type == enemy){
+			Normalizedobject = objecthandler[i];
+			Normalizedobject.position_x = Normalizedobject.position_x >> FP_SCALE;
+			Normalizedobject.position_y = Normalizedobject.position_y >> FP_SCALE;
+			if(HitboxOverlap(getTankHitbox(Normalizedobject),getBulletHitbox(localBullet))){
+				oldPos.x = objecthandler[i].position_x >> FP_SCALE;
+				oldPos.y = objecthandler[i].position_y >> FP_SCALE;
+				eraseTankSelective(oldPos, objecthandler[i], selectTankSprite((objecthandler[i].c & (0x07 << 4)) >> 4));
+				objecthandler[i].type = empty;
 
-			gotoxy(tmpX >> FP_SCALE, tmpY >> FP_SCALE);
-			printf("%c", 32);
-			bullet->type = empty;
-			return;
+				gotoxy(tmpX >> FP_SCALE, tmpY >> FP_SCALE);
+				printf("%c", 32);
+				bullet->type = empty;
+				return;
+			}
 		}
+		if (objecthandler[i].type == player){
+			Normalizedobject = objecthandler[i];
+			Normalizedobject.position_x = Normalizedobject.position_x >> FP_SCALE;
+			Normalizedobject.position_y = Normalizedobject.position_y >> FP_SCALE;
+			if (HitboxOverlap(getTankHitbox(Normalizedobject),getBulletHitbox(localBullet))){
+				//Add erase player function
+				objecthandler[i].type = empty;
 
-		if (objecthandler[i].type == player && HitboxOverlap(getTankHitbox(objecthandler[i]),getBulletHitbox(localBullet))){
-			printf("%d ", i);
-			//Add erase player function
-			objecthandler[i].type = empty;
-
-			gotoxy(tmpX >> FP_SCALE, tmpY >> FP_SCALE);
-			printf("%c", 32);
-			bullet->type = empty;
-			return;
+				gotoxy(tmpX >> FP_SCALE, tmpY >> FP_SCALE);
+				printf("%c", 32);
+				bullet->type = empty;
+				return;
+			}
 		}
 	}
 

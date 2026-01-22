@@ -45,6 +45,7 @@ static struct Star stars[] = {
 };
 
 static const uint8_t starCount = sizeof(stars) / sizeof(stars[0]);
+
 static uint8_t starOverlap(Point tankPos, struct Star s) {
     return !(tankPos.x + TANK_WIDTH  <= s.pos.x ||
              s.pos.x + s.size.x      <= tankPos.x ||
@@ -113,18 +114,17 @@ uint8_t level1(void) {
         if (joy & JOY_PAUSE) {
             stTimer();              // toggle timer on/off
         }
-    }
-
-    Point tankPos = {
-        getTankX(&objecthandler[0]),
-        getTankY(&objecthandler[0])
-    };
-    for (uint8_t i = 0; i < starCount; i++) {
-        if (!starOverlap(tankPos, stars[i])) {
-            fgcolor(11);
-            printCp850At(stars[i].pos.x, stars[i].pos.y, stars[i].sprite());
-            fgcolor(15);
-        }
+        // Point tankPos = {
+        //     getTankX(&objecthandler[0]),
+        //     getTankY(&objecthandler[0])
+        // };
+        // for (uint8_t i = 0; i < starCount; i++) {
+        //     if (!starOverlap(tankPos, stars[i])) {
+        //         fgcolor(11);
+        //         printCp850At(stars[i].pos.x, stars[i].pos.y, stars[i].sprite());
+        //         fgcolor(15);
+        //     }
+        // }
     }
 }
 
@@ -213,24 +213,22 @@ uint8_t level2(void) {
 
     // Game loop
     while (1) {
+        readKeyboardBuffer(buf);
+        uint8_t joy = readController(&objecthandler[0], buf);
+        
     	if (tankUpdateDue()) {
-    	            updateObject(objecthandler, &world, buf);{
-    	            }
-            // controlTank(&world, &playerTank);
-
-            Point tankPos = {
-                getTankX(&objecthandler[0]),
-                getTankY(&objecthandler[0])
-            };
-
-            // Restore stjerner
-            for (uint8_t i = 0; i < starCount2; i++) {
-                if (!starOverlap2(tankPos, stars2[i])) {
-                    fgcolor(11);
-                    printCp850At(stars2[i].pos.x, stars2[i].pos.y, stars2[i].sprite());
-                    fgcolor(15);
-                }
+            updateObject(objecthandler, &world, buf);
+            // Loss
+            if (playerIsDead(objecthandler)) {
+                return 0;
             }
+            // Win
+             if (allEnemiesGone(objecthandler)) {
+                return 1;
+            }
+        }
+        if (joy & JOY_PAUSE) {
+            stTimer();              // toggle timer on/off
         }
     }
 }
@@ -345,12 +343,23 @@ uint8_t level3(void) {
     char buf[32];
 
     while (1) {
+        readKeyboardBuffer(buf);
+        uint8_t joy = readController(&objecthandler[0], buf);
+        
     	if (tankUpdateDue()) {
-    	            updateObject(objecthandler, &world, buf);
-    	}
-
-            //   controlTank(&world, &playerTank);
-
+            updateObject(objecthandler, &world, buf);
+            // Loss
+            if (playerIsDead(objecthandler)) {
+                return 0;
+            }
+            // Win
+             if (allEnemiesGone(objecthandler)) {
+                return 1;
+            }
+        }
+        if (joy & JOY_PAUSE) {
+            stTimer();              // toggle timer on/off
+        }
               Point tankPos = {
               getTankX(&objecthandler[0]),
               getTankY(&objecthandler[0])

@@ -34,7 +34,34 @@ void showVictoryScreen(uint8_t level_num) {
             break;
     }
 }
+void gameOverScreen(void) {
+    //clrscr();
+    fgcolor(12); // rød
+    printCp850At(80, 28, getGameOver());
+    char buf[32];
+    // Wait for release
+        while (1) {
+            readKeyboardBuffer(buf);
+            if (!(readMenuInput(buf) & JOY_CENTER))
+                break;
+        }
 
+        // Wait for press
+        while (1) {
+            readKeyboardBuffer(buf);
+            if (readMenuInput(buf) & JOY_CENTER)
+                break;
+        }
+
+        // Wait for release again
+        while (1) {
+            readKeyboardBuffer(buf);
+            if (!(readMenuInput(buf) & JOY_CENTER))
+                break;
+        }
+        // Gå tilbage til title screen
+        drawTitleScreen();
+    }
 
 uint8_t showPauseScreen(void) {
     gotoxy(109, 2);
@@ -112,7 +139,7 @@ void preLevelx(void) {
                 preLevelx();
             } else {
                 level_num = 1;
-                drawTitleScreen();
+                gameOverScreen();
             }
 
             return;

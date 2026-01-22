@@ -17,9 +17,12 @@ void shootBullet(object_t *player, object_t *objecthandler, uint8_t direction, u
 	player->c &= ~(0x07 << 8);
 	player->c |= ((bullets - 1) << 8);
 
-	// Reset cooldown to 500 ms
-	player->c &= ~(0x3FF << 17);
-	player->c |= (200 << 17);
+	// Reset cooldown to 50 and 300 ms
+		player->c &= ~(0x3FF << 17);
+		if (player->type == enemy)
+		    player->c |= (50 << 17);
+		else
+		    player->c |= (300 << 17);
 
 	uint8_t i = 0;
 	for (; i < 64; i++) {

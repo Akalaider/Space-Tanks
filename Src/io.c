@@ -190,4 +190,3 @@ uint8_t readMenuInput(char *buf) {
     // Keyboard arrows
     return readKeysFromBuffer(buf);
 }
-

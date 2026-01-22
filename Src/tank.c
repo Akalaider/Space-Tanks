@@ -41,9 +41,9 @@ void drawTank(object_t tank, const char *sprite)
         case player: {
             int p = getPlayer(&tank);
             if (p == 2) {
-                fgcolor(10);
-            } else {
                 fgcolor(12);
+            } else {
+                fgcolor(10);
             }
             break;
         }

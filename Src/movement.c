@@ -66,8 +66,12 @@ void controlTank(object_t *objecthandler, World *world, object_t *tank, char *bu
     		shootBullet(tank, objecthandler, (tank->c & (0x07 << 4)) >> 4, 3);
     	}
     }
-    if(joy & JOY_BUTTON1){
+    if(joy & JOY_BUTTON1 && getTankHomings(tank) > 0){
+        uint8_t homings = getTankHomings(tank);
         shootBullet(tank, objecthandler, (tank->c & (0x07 << 4)) >> 4, 0);
+        tank->c &= ~(0x07 << 11);
+        homings--;
+        tank->c |= (homings << 11);
     }
 
     if (dx == 0 && dy == 0)

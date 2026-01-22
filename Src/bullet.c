@@ -193,13 +193,7 @@ void updateBullet(object_t *bullet, object_t *objecthandler, World *world){
 		int8_t target;
 		for (uint8_t i = 0; i < 64; i++){
 			if (objecthandler[i].type != enemy) continue;
-			if (bullet->c >> 20 == 0){
-				gotoxy(10,10);
-				printf("has no target %d", i);
-			} else {
-				gotoxy(10,11);
-				printf("target is %d", i);
-			}
+
 			if ((bullet->c != (i >> 20)) && ((bullet->c >> 20) != 0)) continue;
 
 			rSquare = ((objecthandler[i].position_x - bullet->position_x) >> FP_SCALE)*((objecthandler[i].position_x - bullet->position_x) >> FP_SCALE)

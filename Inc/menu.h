@@ -13,6 +13,7 @@ typedef enum {
     MENU_MULTIPLAYER_RIGHT = 6,
     MENU_MULTIPLAYER_BACK = 7,
     MENU_START_SINGLEPLAYER = 8,
+    MENU_START_COOP = 9
 } MenuState;
 
 MenuState drawTitleScreen(void);

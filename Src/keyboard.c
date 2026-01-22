@@ -27,8 +27,6 @@ void readKeyboardBuffer(char *buf) {
     if (t > 0) {
         for (uint8_t i = 0; i < t; i++) {
             buf[i] = uart_get_char();
-            gotoxy(20,20);
-            printf("%c", buf[i]);
         }
         buf[t] = '\0';
     }

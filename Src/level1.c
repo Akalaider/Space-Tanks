@@ -85,7 +85,7 @@ uint8_t level1(void) {
     object_t objecthandler[OBJECTHANDLER_SIZE];
     initObjecthandler(objecthandler);
 
-    initTank(&objecthandler[0]);
+    initTank(&objecthandler[0], 10, 61, 0);
     timer_attachPlayerTank(&objecthandler[0]); // For cooldowns
 
     push_info_lcd(&objecthandler[0]);
@@ -202,7 +202,7 @@ uint8_t level2(void) {
     object_t objecthandler[OBJECTHANDLER_SIZE];
     initObjecthandler(objecthandler);
 
-    initTank(&objecthandler[0]);
+    initTank(&objecthandler[0], 10, 61, 0);
     timer_attachPlayerTank(&objecthandler[0]); // For cooldowns
 
     push_info_lcd(&objecthandler[0]);
@@ -341,7 +341,7 @@ uint8_t level3(void) {
     object_t objecthandler[OBJECTHANDLER_SIZE];
     initObjecthandler(objecthandler);
 
-    initTank(&objecthandler[0]);
+    initTank(&objecthandler[0], 10, 61, 0);
     timer_attachPlayerTank(&objecthandler[0]); // For cooldowns
 
     push_info_lcd(&objecthandler[0]);
@@ -380,7 +380,97 @@ uint8_t level3(void) {
             updateObject(objecthandler, &world, buf);
 
             if (playerIsDead(objecthandler)) return 0;
-            if (allEnemiesGone(objecthandler)) return 1;
+            if (allEnemiesGone(objecthandler)) return 2;
+        }
+    }
+}
+
+uint8_t levelCoop(void) {
+    clrscr();
+
+    // Draw game arena
+    Point outerWall[] = {
+         {0, 0}, {240, 0}, {240, 72}, {0, 72}
+    };
+
+    World world = {0};
+
+    drawWalls(outerWall, 4, 1, &world);
+
+    Point innerWall1[] = {
+        {25, 20}, {25, 10}, {85, 10}
+    };
+    drawWalls(innerWall1, 3, 0, &world);
+
+    Point innerWall2[] = {
+    		{105, 10}, {105, 40},
+    };
+    drawWalls(innerWall2, 2, 0, &world);
+
+    Point innerWall3[] = {
+    		{105,25}, {130,25}
+    };
+    drawWalls(innerWall3, 2, 0, &world);
+
+    Point innerWall4[] = {
+    		{25, 40}, {85, 40}
+    };
+
+    drawWalls(innerWall4, 2, 0, &world);
+
+    Point innerWall5[] = {
+    		{55, 40}, {55, 55}
+    };
+
+    drawWalls(innerWall5, 2, 0, &world);
+
+    Point innerWall6[] = {
+    		{105, 50}, {155, 50}
+    };
+
+    drawWalls(innerWall6, 2, 0, &world);
+
+    Point innerWall7[] = {
+    		{135, 35}, {135, 50}
+    };
+
+    drawWalls(innerWall7, 2, 0, &world);
+
+    Point innerWall8[] = {
+    		{155, 10}, {155, 35}, {185, 35}, {185, 50}
+    };
+
+    drawWalls(innerWall8, 4, 0, &world);
+
+    drawObstacle((Point){123, 60}, getAsteroid3(), 20, 4, &world);
+    drawObstacle((Point){120, 10}, getAsteroid6(), 17, 8, &world);
+    drawObstacle((Point){52, 20}, getAsteroid4(), 20, 9, &world);
+    drawObstacle((Point){30, 53}, getAsteroid2(), 14, 9, &world);
+    drawObstacle((Point){177, 14}, getAsteroid(), 21, 7, &world);
+
+
+
+    object_t objecthandler[OBJECTHANDLER_SIZE];
+    initObjecthandler(objecthandler);
+
+    initTank(&objecthandler[0], 11, 30, 0);
+    initTank(&objecthandler[1], 11, 61, 2);
+    timer_attachPlayerTank(&objecthandler[0]); // For cooldowns
+
+    initAITank(&objecthandler[2], 200, 10);    // enemy 1
+    initAITank(&objecthandler[3], 220, 35);
+    initAITank(&objecthandler[4], 210, 65);
+    setTankUpdateInterval(50); // 10 ms → 100 Hz
+
+    // Game loop
+    char buf[32];
+    while (1) {
+
+        if (tankUpdateDue()) {
+            updateObject(objecthandler, &world, buf);
+
+            if (playerIsDead(objecthandler)) return 0;
+            if (allEnemiesGone(objecthandler)) return 2;
         }
     }
 }

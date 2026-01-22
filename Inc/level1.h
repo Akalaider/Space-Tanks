@@ -8,3 +8,4 @@
 uint8_t level1(void);
 uint8_t level2(void);
 uint8_t level3(void);
+uint8_t levelCoop(void);

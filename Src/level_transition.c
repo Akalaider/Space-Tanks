@@ -36,8 +36,9 @@ void showVictoryScreen(uint8_t level_num) {
 }
 void gameOverScreen(void) {
     //clrscr();
-    fgcolor(12); // rød
+    fgcolor(1); // rød
     printCp850At(80, 28, getGameOver());
+    fgcolor(15);
     char buf[32];
     // Wait for release
         while (1) {

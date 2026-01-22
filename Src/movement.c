@@ -6,16 +6,16 @@ void setTankBullets(object_t *tank, uint8_t bullets) {
 }
 
 
-void initTank(object_t *tank)
+void initTank(object_t *tank, int16_t x, int16_t y, uint8_t control)
 {
     tank->type = player;
-    tank->position_x = 10 << FP_SCALE;
-    tank->position_y = 61 << FP_SCALE;
+    tank->position_x = x << FP_SCALE;
+    tank->position_y = y << FP_SCALE;
     tank->a = TANK_WIDTH;
     tank->b = TANK_HEIGHT;
 
     tank->c = 0;                 // clear all bits
-    tank->c |= KEYBOARD_CONTROL;      // control mode
+    tank->c |= control;      // control mode
     tank->c |= (3 << 2);         // health = 3
     tank->c |= (0 << 4);         // sprite index = 0
     tank->c |= (5 << 8);         // Set bullets to 5

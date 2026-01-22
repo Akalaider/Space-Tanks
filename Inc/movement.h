@@ -19,7 +19,7 @@
 #define DIAG_SCALE 91 // ≈ 1/sqrt(2) * 128
 
 void setTankBullets(object_t *tank, uint8_t bullets);
-void initTank(object_t *tank);
+void initTank(object_t *tank, int16_t x, int16_t y, uint8_t control);
 void controlTank(object_t *objecthandler, World *world, object_t *tank, char *buf);
 uint8_t readController(const object_t *tank, char *buf);
 int16_t getTankX(const object_t *tank);

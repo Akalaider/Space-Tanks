@@ -384,7 +384,9 @@ static void handleMultiplayerMenuInput(BlinkController *b, uint8_t joyState,
     if (joyState & JOY_CENTER) {
         if (b->x == GAMEMODE_MENU_LEFT_X) {
             timer_detachBlink(b);
-            // TODO: Start coop mode
+            *currentMenu = MENU_START_COOP;
+            return;
+
         } else if (b->x == GAMEMODE_MENU_RIGHT_X) {
             timer_detachBlink(b);
             // TODO: Start versus mode
@@ -511,8 +513,8 @@ MenuState drawTitleScreen(void) {
 
         lastJoyState = joyState;
 
-        if (currentMenu == MENU_START_SINGLEPLAYER) { 
-            return MENU_START_SINGLEPLAYER;
+        if (currentMenu == MENU_START_SINGLEPLAYER || currentMenu == MENU_START_COOP) { 
+            return currentMenu;
         }
     }
 }

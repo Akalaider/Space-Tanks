@@ -42,5 +42,8 @@ int main(void)
         if (result == MENU_START_SINGLEPLAYER) {
             preLevelx();
         }
+        if (result == MENU_START_COOP) {
+            levelCoop();
+        }
     }
 }

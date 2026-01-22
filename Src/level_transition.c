@@ -38,12 +38,12 @@ void preLevelx(void) {
     printf("Press CENTER to start!");
 
     // Wait for release
-    while (readJoystick() & JOY_CENTER) {}
+    while (readHat() & JOY_CENTER) {}
 
     uint8_t lastJoy = 0;
 
     while (1) {
-        uint8_t joy = readJoystick();
+        uint8_t joy = readHat();
         uint8_t newPress = joy & ~lastJoy;
 
         if (newPress & JOY_CENTER) {

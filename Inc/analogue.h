@@ -14,6 +14,8 @@
 
 void initADC();
 uint16_t readAnalogue(uint8_t channel);
+uint16_t readJoystickAxis(char axis);
+uint8_t readJoystick();
 
 
 #endif /* ANALOGUE_H_ */

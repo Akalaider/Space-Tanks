@@ -34,14 +34,15 @@ uint8_t readController(const object_t *tank, char *buf){
         return JOY_PAUSE;
 
     switch (tank->c & 0x03) {
-        case KEYBOARD_CONTROL:
-            return readKeysFromBuffer(buf);
-
-        case JOYSTICK_CONTROL:
-        case HAT_CONTROL:
-        default:
-            return readJoystick();
-    }
+		case JOYSTICK_CONTROL:
+			return readJoystick();
+		case KEYBOARD_CONTROL:
+			return readKeysFromBuffer(buf);
+		case HAT_CONTROL:
+			return readHat();
+		default:
+			return readHat();
+	}
 }
 
 

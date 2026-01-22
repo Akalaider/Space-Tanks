@@ -9,6 +9,7 @@
 #include "menu.h"
 #include "level1.h"
 #include "io.h"
+#include "analogue.h"
 
 #define clearCursor() printf("\033[?25l")
 #define showCursor()  printf("\033[?25h")
@@ -24,7 +25,7 @@ int main(void)
     setupJoystick();
     setupLED();
     lcd_init();
-
+    initAnalogue();
     // Clear the LDC
     uint8_t lcd_buffer[512] = {0};
     char screen[] = "";

@@ -6,6 +6,7 @@
 #include "tank.h"
 #include "io.h"
 #include "bullet.h"
+#include "analogue.h"
 // Fixed‑point scale factor (128 = 7 bits)
 #define FP_SCALE 7
 

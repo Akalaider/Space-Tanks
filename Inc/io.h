@@ -25,7 +25,7 @@ void setupRight();
 void setupLeft();
 void setupCenter();
 void setupJoystick();
-int8_t readJoystick();
+int8_t readHat();
 
 #define black 0
 #define blue 1

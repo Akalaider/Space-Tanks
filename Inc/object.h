@@ -18,8 +18,7 @@ typedef struct World World;
 void initObjecthandler(object_t* objecthandler);
 void spawnObject(object_t* objecthandler, object_t object);
 void deleteObject(object_t* objecthandler, uint8_t id);
-void updateObject(object_t* objecthandler, World* world);
-
+void updateObject(object_t* objecthandler, World* world, char *buf);
 
 
 #endif /* OBJECT_H_ */

@@ -19,8 +19,8 @@
 
 void setTankBullets(object_t *tank, uint8_t bullets);
 void initTank(object_t *tank);
-void controlTank(object_t *objecthandler, World *world, object_t *tank);
-uint8_t readController(const object_t *tank);
+void controlTank(object_t *objecthandler, World *world, object_t *tank, char *buf);
+uint8_t readController(const object_t *tank, char *buf);
 int16_t getTankX(const object_t *tank);
 int16_t getTankY(const object_t *tank);
 uint8_t getPlayer(const object_t *tank);

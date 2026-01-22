@@ -4,6 +4,8 @@
 #include "ansi.h"
 #include "movement.h"
 #include "io.h"
+#include "timer.h"
+#include "aimovement.h"
 
 static uint8_t playerIsDead(object_t *objects) {
     // Player is always index 0
@@ -89,34 +91,42 @@ uint8_t level1(void) {
     initAITank(&objecthandler[1], 200, 10);    // enemy 1
 
     setTankUpdateInterval(50); // 10 ms → 100 Hz
+    TIM15->CR1 |= 0x0001;   // enable counter
+
+    char buf[32];
     // Game loop
     while (1) {
+        readKeyboardBuffer(buf);
+        uint8_t joy = readController(&objecthandler[0], buf);
+        
         if (tankUpdateDue()) {
-            updateObject(objecthandler, &world);
-        }
+            updateObject(objecthandler, &world, buf);
             // Loss
             if (playerIsDead(objecthandler)) {
                 return 0;
             }
-
             // Win
-            if (allEnemiesGone(objecthandler)) {
+             if (allEnemiesGone(objecthandler)) {
                 return 1;
             }
         }
-
-        Point tankPos = {
-                  getTankX(&objecthandler[0]),
-                  getTankY(&objecthandler[0])
-                  };
-        for (uint8_t i = 0; i < starCount; i++) {
-             if (!starOverlap(tankPos, stars[i])) {
-             fgcolor(11);
-             printCp850At(stars[i].pos.x, stars[i].pos.y, stars[i].sprite());
-             fgcolor(15);
-                      }
-                  }
+        if (joy & JOY_PAUSE) {
+            stTimer();              // toggle timer on/off
+        }
     }
+
+    Point tankPos = {
+        getTankX(&objecthandler[0]),
+        getTankY(&objecthandler[0])
+    };
+    for (uint8_t i = 0; i < starCount; i++) {
+        if (!starOverlap(tankPos, stars[i])) {
+            fgcolor(11);
+            printCp850At(stars[i].pos.x, stars[i].pos.y, stars[i].sprite());
+            fgcolor(15);
+        }
+    }
+}
 
 
 
@@ -149,8 +159,6 @@ static uint8_t starOverlap2(Point tankPos, struct Star s) {
 
 
 uint8_t level2(void) {
-
-
     clrscr();
 
     // Ydre væg
@@ -191,21 +199,22 @@ uint8_t level2(void) {
 
 
     object_t objecthandler[OBJECTHANDLER_SIZE];
-        initObjecthandler(objecthandler);
+    initObjecthandler(objecthandler);
 
-        initTank(&objecthandler[0]);
-        timer_attachPlayerTank(&objecthandler[0]); // For cooldowns
+    initTank(&objecthandler[0]);
+    timer_attachPlayerTank(&objecthandler[0]); // For cooldowns
 
-        push_info_lcd(&objecthandler[0]);
-        initAITank(&objecthandler[1], 200, 10);    // enemy 1
-        initAITank(&objecthandler[2], 200, 50);
+    push_info_lcd(&objecthandler[0]);
+    initAITank(&objecthandler[1], 200, 10);    // enemy 1
+    initAITank(&objecthandler[2], 200, 50);
 
-        setTankUpdateInterval(50); // 10 ms → 100 Hz
+    setTankUpdateInterval(50); // 10 ms → 100 Hz
+    char buf[32];
 
     // Game loop
     while (1) {
     	if (tankUpdateDue()) {
-    	            updateObject(objecthandler, &world);{
+    	            updateObject(objecthandler, &world, buf);{
     	            }
             // controlTank(&world, &playerTank);
 
@@ -256,8 +265,6 @@ static uint8_t starOverlap3(Point tankPos, struct Star s) {
 
 //ai_t enemy1;
 uint8_t level3(void) {
-
-
     clrscr();
 
     // Draw game arena
@@ -323,21 +330,23 @@ uint8_t level3(void) {
 
 
     object_t objecthandler[OBJECTHANDLER_SIZE];
-        initObjecthandler(objecthandler);
+    initObjecthandler(objecthandler);
 
-        initTank(&objecthandler[0]);
-        timer_attachPlayerTank(&objecthandler[0]); // For cooldowns
+    initTank(&objecthandler[0]);
+    timer_attachPlayerTank(&objecthandler[0]); // For cooldowns
 
-        push_info_lcd(&objecthandler[0]);
-        initAITank(&objecthandler[1], 200, 10);    // enemy 1
-        initAITank(&objecthandler[2], 220, 35);
-        initAITank(&objecthandler[3], 210, 65);
-        setTankUpdateInterval(50); // 10 ms → 100 Hz
+    push_info_lcd(&objecthandler[0]);
+    initAITank(&objecthandler[1], 200, 10);    // enemy 1
+    initAITank(&objecthandler[2], 220, 35);
+    initAITank(&objecthandler[3], 210, 65);
+    setTankUpdateInterval(50); // 10 ms → 100 Hz
 
     // Game loop
+    char buf[32];
+
     while (1) {
     	if (tankUpdateDue()) {
-    	            updateObject(objecthandler, &world);
+    	            updateObject(objecthandler, &world, buf);
     	}
 
             //   controlTank(&world, &playerTank);

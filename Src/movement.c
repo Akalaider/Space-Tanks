@@ -15,13 +15,13 @@ void initTank(object_t *tank)
     tank->b = TANK_HEIGHT;
 
     tank->c = 0;                 // clear all bits
-    tank->c |= HAT_CONTROL;      // control mode = hat
+    tank->c |= KEYBOARD_CONTROL;      // control mode
     tank->c |= (3 << 2);         // health = 3
     tank->c |= (0 << 4);         // sprite index = 0
     tank->c |= (5 << 8);         // Set bullets to 5
     tank->c |= (3 << 11);        // Set homing bullets to 3
     tank->c |= (0 << 14);		 // PowerupMode: bx00 -> no powerUp -- bxX1 -> ricochet bullet -- bx1X -> speedBoost
-    tank->c &= ~(0x3FF << 17);     // clear value 
+    tank->c &= ~(0x3FF << 17);   // clear value 
     tank->c |= (500 << 17);      // store cooldown value
 
     const char *sprite = selectTankSprite(getTankSpriteIndex(tank));
@@ -29,24 +29,25 @@ void initTank(object_t *tank)
 }
 
 
-uint8_t readController(const object_t *tank){
+uint8_t readController(const object_t *tank, char *buf){
+    if (charInString(buf, 'p'))
+        return JOY_PAUSE;
+
     switch (tank->c & 0x03) {
-		case JOYSTICK_CONTROL:
-			//add joystickcontroller return
-			return;
-		case KEYBOARD_CONTROL:
-			//add joystickcontroller return
-			return;
-		case HAT_CONTROL:
-			return readJoystick();
-		default:
-			return readJoystick();
-	}
+        case KEYBOARD_CONTROL:
+            return readKeysFromBuffer(buf);
+
+        case JOYSTICK_CONTROL:
+        case HAT_CONTROL:
+        default:
+            return readJoystick();
+    }
 }
 
-void controlTank(object_t *objecthandler, World *world, object_t *tank)
+
+void controlTank(object_t *objecthandler, World *world, object_t *tank, char *buf)
 {
-    uint8_t joy = readController(tank);
+    uint8_t joy = readController(tank, buf);
 
     int16_t dx = 0, dy = 0;
 

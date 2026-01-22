@@ -25,23 +25,24 @@ void deleteObject(object_t* objecthandler, uint8_t id){
 	objecthandler[id].type = empty;
 }
 
-void updateObject(object_t* objecthandler, World* world){
-	for(uint8_t i = 0; i < OBJECTHANDLER_SIZE; i++){
-		switch (objecthandler[i].type){
-			case empty:
-				break;
-			case bullet:
-				updateBullet(&objecthandler[i],&objecthandler, world);
-				break;
-			case player:
-				controlTank(objecthandler, world, &objecthandler[i]);
-				push_info_lcd(&objecthandler[i]);
-				break;
-			case enemy:
-				controlAITank(&objecthandler[i], objecthandler, world);
-				break;
-			case powerup:
-				updatePowerup(&objecthandler[i], objecthandler, world);
-		}
-	}
+void updateObject(object_t* objecthandler, World* world, char *buf){ 
+	for(uint8_t i = 0; i < OBJECTHANDLER_SIZE; i++){ 
+		switch (objecthandler[i].type){ 
+			case empty: break; 
+			case bullet: 
+				updateBullet(&objecthandler[i], objecthandler, world); 
+				break; 
+			case player: 
+				controlTank(objecthandler, world, &objecthandler[i], buf); 
+				push_info_lcd(&objecthandler[i]); 
+				buf[0] = '\0';
+				break; 
+			case enemy: 
+				controlAITank(&objecthandler[i], objecthandler, world); 
+				break; 
+			case powerup: 
+				updatePowerup(&objecthandler[i], objecthandler, world); 
+				break; 
+		} 
+	} 
 }

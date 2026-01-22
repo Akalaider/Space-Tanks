@@ -12,11 +12,26 @@ void initAITank(object_t *ai, int16_t x, int16_t y)
 
     ai->c = 0;
     ai->c |= AI_DIRECT;      // bit 0–1 = AI state
-    ai->c |= (0 << 4);       // spriteIndex = 0
-    ai->c |= (3 << 2);       // health = 3
+    ai->c |= (4 << 4);       // spriteIndex = 4
+    ai->c |= (1 << 2);       // health = 3
+    ai->c |= (5 << 8);       // 5 normal bullets
+    ai->c &= ~(0x3FF << 17);
+    ai->c |= (50 << 17);   // 50 ms cooldown
+
 
     const char *sprite = selectTankSprite(4); // ned
     drawTank(*ai, sprite);
+}
+static void aiTryShoot(object_t *ai, object_t *objecthandler) {
+
+    if (getTankCooldown(ai) != 0) // Cooldown check
+        return;
+
+    uint8_t dir = getTankSpriteIndex(ai); // Find retning
+
+    uint8_t bulletType = (getTankPowerup(ai) & 1) ? 3 : 2; // Vælg bullet-type
+
+    shootBullet(ai, objecthandler, dir, bulletType); // Skyd
 }
 
 static void moveAI(object_t *ai, World *world, int16_t dx, int16_t dy)
@@ -99,7 +114,13 @@ static void moveAI(object_t *ai, World *world, int16_t dx, int16_t dy)
 
 void controlAITank(object_t *ai, object_t *objecthandler, World *world)
 {
-    static int16_t hugDx = 0;
+	// Cooldown nedtælling
+	uint16_t cd = getTankCooldown(ai);
+	if (cd > 0) {
+	    ai->c &= ~(0x3FF << 17);
+	    ai->c |= ((cd - 1) << 17);
+	}
+	static int16_t hugDx = 0;
     static int16_t hugDy = 0; // Bruges til at komme rundt om vægge
 
     object_t *playerObj = NULL;
@@ -111,6 +132,8 @@ void controlAITank(object_t *ai, object_t *objecthandler, World *world)
     }
     if (!playerObj)
         return;
+
+
 
     int16_t aiX = getTankX(ai);
     int16_t aiY = getTankY(ai);
@@ -140,6 +163,7 @@ void controlAITank(object_t *ai, object_t *objecthandler, World *world)
         dx = 0;
         dy = 0; // AI stopper hvis den kommer for tæt på player
     }
+    aiTryShoot(ai, objecthandler);
 
     // MODE: Direct
     if (GET_STATE(ai) == AI_DIRECT) {
@@ -217,5 +241,6 @@ void controlAITank(object_t *ai, object_t *objecthandler, World *world)
         if (checkWallCollisionAABB(nextObj, world) == COLLISION_NONE) {
             SET_STATE(ai, AI_DIRECT);
         }
+
     }
 }

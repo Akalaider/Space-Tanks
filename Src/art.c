@@ -418,6 +418,20 @@ static const char victory[] =
 "  ╚████╔╝ ██║╚██████╗   ██║   ╚██████╔╝██║  ██║   ██║    \n"
 "   ╚═══╝  ╚═╝ ╚═════╝   ╚═╝    ╚═════╝ ╚═╝  ╚═╝   ╚═╝    \n"
 "                                                         \n";
+static const char gameover[] =
+"╔───────────────────────────────────────────────────────────────────────────────╗\n"
+"│                                                                               │\n"
+"│   ██████╗  █████╗ ███╗   ███╗███████╗      ██████╗ ██╗   ██╗███████╗██████╗   │\n"
+"│  ██╔════╝ ██╔══██╗████╗ ████║██╔════╝     ██╔═══██╗██║   ██║██╔════╝██╔══██╗  │\n"
+"│  ██║  ███╗███████║██╔████╔██║█████╗       ██║   ██║██║   ██║█████╗  ██████╔╝  │\n"
+"│  ██║   ██║██╔══██║██║╚██╔╝██║██╔══╝       ██║   ██║██║   ██║██╔══╝  ██╔══██╗  │\n"
+"│  ╚██████╔╝██║  ██║██║ ╚═╝ ██║███████╗     ╚██████╔╝╚██████╔╝███████╗██║  ██║  │\n"
+"│   ╚═════╝ ╚═╝  ╚═╝╚═╝     ╚═╝╚══════╝      ╚═════╝  ╚═════╝ ╚══════╝╚═╝  ╚═╝  │\n"
+"│                                                                               │\n"
+"│                         PRESS CENTER TO CONTINUE TO MENU                      │\n"
+"│                                                                               │\n"
+"╚───────────────────────────────────────────────────────────────────────────────╝\n";
+
                                                                                                                                                                                                   
 
 const char *getTankUp(void)        { return tankUp; }
@@ -445,6 +459,7 @@ const char *getArrowDown(void)     { return arrowDown; }
 const char *getBlankArrow(void)    { return blankArrow; }
 
 const char *getVictory(void)       { return victory; }
+const char *getGameOver(void)      { return gameover; }
 
 const char *getAsteroid(void)	   { return asteroid; }
 const char *getOumuamua(void)      { return oumuamua; }

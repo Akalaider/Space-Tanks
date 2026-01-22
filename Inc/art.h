@@ -38,6 +38,7 @@ const char *getArrowDown(void);
 const char *getBlankArrow(void);
 
 const char *getVictory(void);
+const char *getGameOver(void);
 
 const char *getAsteroid(void);
 const char *getAsteroid2(void);

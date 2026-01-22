@@ -408,6 +408,16 @@ static const char keyboard[] =
 "                  ██                     ██   ██                     ██  ▓█                      ██\n"
 "                  ██                     ██   ██                     ██  ▓█                      ██\n"
 "                   ███████████████████████     ███████████████████████    ▒███████████████████████ \n";
+
+static const char victory[] =
+"                                                         \n"
+" ██╗   ██╗██╗ ██████╗████████╗ ██████╗ ██████╗ ██╗   ██╗ \n"
+" ██║   ██║██║██╔════╝╚══██╔══╝██╔═══██╗██╔══██╗╚██╗ ██╔╝ \n"
+" ██║   ██║██║██║        ██║   ██║   ██║██████╔╝ ╚████╔╝  \n"
+" ╚██╗ ██╔╝██║██║        ██║   ██║   ██║██╔══██╗  ╚██╔╝   \n"
+"  ╚████╔╝ ██║╚██████╗   ██║   ╚██████╔╝██║  ██║   ██║    \n"
+"   ╚═══╝  ╚═╝ ╚═════╝   ╚═╝    ╚═════╝ ╚═╝  ╚═╝   ╚═╝    \n"
+"                                                         \n";
                                                                                                                                                                                                   
 
 const char *getTankUp(void)        { return tankUp; }
@@ -433,6 +443,8 @@ const char *getArrowLeft(void)     { return arrowLeft; }
 const char *getArrowRight(void)    { return arrowRight; }
 const char *getArrowDown(void)     { return arrowDown; }
 const char *getBlankArrow(void)    { return blankArrow; }
+
+const char *getVictory(void)       { return victory; }
 
 const char *getAsteroid(void)	   { return asteroid; }
 const char *getOumuamua(void)      { return oumuamua; }

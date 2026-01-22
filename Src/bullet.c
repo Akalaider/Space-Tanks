@@ -123,7 +123,10 @@ void updateBullet(object_t *bullet, object_t *objecthandler, World *world){
 			Normalizedobject.position_y = Normalizedobject.position_y >> FP_SCALE;
 			if (HitboxOverlap(getTankHitbox(Normalizedobject),getBulletHitbox(localBullet))){
 				//Add erase player function
-				objecthandler[i].type = empty;
+				uint8_t health = getTankHealth(&objecthandler[i]); // Health
+				health--;
+				objecthandler[i].c &= ~(0x03 << 2);
+				objecthandler[i].c |= (health << 2);
 
 				gotoxy(tmpX >> FP_SCALE, tmpY >> FP_SCALE);
 				printf("%c", 32);

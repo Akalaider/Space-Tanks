@@ -63,7 +63,8 @@ void preLevelx(void) {
             } else {
 
                 level_num = 1;                    // restart from level 1
-                preLevelx();
+                drawTitleScreen();
+                // preLevelx();
             }
 
             return;

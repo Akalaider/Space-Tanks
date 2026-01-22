@@ -37,6 +37,8 @@ const char *getArrowRight(void);
 const char *getArrowDown(void);
 const char *getBlankArrow(void);
 
+const char *getVictory(void);
+
 const char *getAsteroid(void);
 const char *getAsteroid2(void);
 const char *getAsteroid3(void);

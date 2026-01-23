@@ -288,7 +288,7 @@ uint8_t level3(void) {
     Point innerWall1[] = {
         {25, 20}, {25, 10}, {85, 10}
     };
-    drawWalls(innerWall1, 6, 0, &world);
+    drawWalls(innerWall1, 3, 0, &world);
 
     Point innerWall2[] = {
     		{105, 10}, {105, 40},

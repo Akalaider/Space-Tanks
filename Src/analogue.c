@@ -66,8 +66,8 @@ uint8_t readJoystick(){
 	if(x<1200) tmp |= (1 << 2); //left
 	if(y>2800) tmp |= (1 << 0); //up
 	if(y<1200) tmp |= (1 << 1); //down
-	tmp |= ((GPIOC->IDR & (0x0001 << 10)) >> (-4+10)) //Button1
-		  |((GPIOC->IDR & (0x0001 << 12)) >> (-5+12)); //Button2
+	tmp |= ((GPIOC->IDR & (0x0001 << 10)) >> (-4+10)) //Center
+		  |((GPIOC->IDR & (0x0001 << 12)) >> (-5+12)); //Button1
 	return tmp;
 }
 

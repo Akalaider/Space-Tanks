@@ -159,33 +159,33 @@ void updateBullet(object_t *bullet, object_t *objecthandler, World *world){
 		}
 	}
 
-		if(bullet->c > 1){
-			switch (checkWallCollisionAABB(localBullet, world)){
-			case COLLISION_LEFT:
-				bullet->a = -bullet->a;
-				bullet->c--;
-				break;
-			case COLLISION_RIGHT:
-				bullet->a = -bullet->a;
-				bullet->c--;
-				break;
-			case COLLISION_TOP:
-				bullet->b = -bullet->b;
-				bullet->c--;
-				break;
-			case COLLISION_BOTTOM:
-				bullet->b = -bullet->b;
-				bullet->c--;
-				break;
-			case COLLISION_NONE:
-				break;
-			}
-		} else if(checkWallCollisionAABB(localBullet, world) != COLLISION_NONE){
-			gotoxy(tmpX >> FP_SCALE, tmpY >> FP_SCALE);
-			printf("%c", 32);
-			bullet->type = empty;
-			return;
+	if(bullet->c > 1){
+		switch (checkWallCollisionAABB(localBullet, world)){
+		case COLLISION_LEFT:
+			bullet->a = -bullet->a;
+			bullet->c--;
+			break;
+		case COLLISION_RIGHT:
+			bullet->a = -bullet->a;
+			bullet->c--;
+			break;
+		case COLLISION_TOP:
+			bullet->b = -bullet->b;
+			bullet->c--;
+			break;
+		case COLLISION_BOTTOM:
+			bullet->b = -bullet->b;
+			bullet->c--;
+			break;
+		case COLLISION_NONE:
+			break;
 		}
+	} else if(checkWallCollisionAABB(localBullet, world) != COLLISION_NONE){
+		gotoxy(tmpX >> FP_SCALE, tmpY >> FP_SCALE);
+		printf("%c", 32);
+		bullet->type = empty;
+		return;
+	}
 
 	if (bullet->c == 0){
 		int32_t prevRSquare = 0xFFFFFFFF;

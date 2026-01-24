@@ -30,7 +30,6 @@ void readKeyboardBuffer(char *buf) {
         }
         buf[t] = '\0';
     }
-    // If t == 0, keep the previous buffer contents
 }
 
 uint8_t charInString(char *buf, char n){

@@ -1,10 +1,3 @@
-/*
- * lcd.h
- *
- *  Created on: 9. jan. 2026
- *      Author: adambenali
- */
-
 #ifndef LCD_H_
 #define LCD_H_
 #include <stdint.h>

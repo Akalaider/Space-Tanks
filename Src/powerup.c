@@ -1,9 +1,3 @@
-/*
- * powerup.c
- *
- *  Created on: 21. jan. 2026
- *      Author: adambenali
- */
 #include "powerup.h"
 
 void spawnPowerup(object_t* enemy, object_t *objecthandler){

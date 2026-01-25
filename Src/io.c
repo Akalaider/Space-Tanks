@@ -1,10 +1,3 @@
-/*
- * io.c
- *
- *  Created on: 8. jan. 2026
- *      Author: adambenali
- */
-
 #include "io.h"
 
 #define JOY_MASK 0x1F   // UP, DOWN, LEFT, RIGHT, CENTER

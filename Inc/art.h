@@ -11,7 +11,6 @@ typedef struct {
 // Print UTF‑8 string using CP850 conversion
 void printCp850At(uint16_t x, uint16_t y, const char *s);
 
-// Accessors for tank art (no globals)
 const char *getTankUp(void);
 const char *getTankDown(void);
 const char *getTankLeft(void);

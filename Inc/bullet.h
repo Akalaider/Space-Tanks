@@ -1,10 +1,3 @@
-/*
- * bullet.h
- *
- *  Created on: 20. jan. 2026
- *      Author: adambenali
- */
-
 #ifndef BULLET_H_
 #define BULLET_H_
 #include "object.h"

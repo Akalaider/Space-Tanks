@@ -1,9 +1,3 @@
-/*
- * bullet.c
- *
- *  Created on: 20. jan. 2026
- *      Author: adambenali
- */
 #include "bullet.h"
 #include "movement.h"
 #include "ansi.h"

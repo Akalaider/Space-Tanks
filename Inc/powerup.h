@@ -1,10 +1,3 @@
-/*
- * powerup.h
- *
- *  Created on: 21. jan. 2026
- *      Author: adambenali
- */
-
 #ifndef POWERUP_H_
 #define POWERUP_H_
 #include "object.h"
